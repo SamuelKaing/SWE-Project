@@ -310,7 +310,7 @@ int check_keys(XEvent *e);
 void physics();
 void render();
 extern void show_sam();
-
+extern void print_nate();
 //==========================================================================
 // M A I N
 //==========================================================================
@@ -509,6 +509,7 @@ int check_keys(XEvent *e)
 			show_sam();
 			break;
 		case XK_s:
+			print_nate();
 			break;
 		case XK_Down:
 			break;
