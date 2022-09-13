@@ -1,8 +1,9 @@
 //author: Samuel Kaing
 //
+#include <stdio.h>
 
-int main()
+void show_sam()
 {
-
-    return 0;
+	printf("skaing\n");
 }
+

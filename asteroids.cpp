@@ -309,6 +309,7 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
+extern void show_sam();
 
 //==========================================================================
 // M A I N
@@ -504,7 +505,8 @@ int check_keys(XEvent *e)
 	switch (key) {
 		case XK_Escape:
 			return 1;
-		case XK_f:
+		case XK_g:
+			show_sam();
 			break;
 		case XK_s:
 			break;
