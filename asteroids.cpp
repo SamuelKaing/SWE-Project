@@ -60,10 +60,14 @@ class Global {
 public:
 	int xres, yres;
 	char keys[65536];
+	unsigned int mouse_cursor;
+	unsigned int credits;
 	Global() {
 		xres = 640;
 		yres = 480;
 		memset(keys, 0, 65536);
+		mouse_cursor = 0;	//Initial mouse state is off
+		credits = 0; 		//Credits page initially off
 	}
 } gl;
 
@@ -433,6 +437,10 @@ void check_mouse(XEvent *e)
 	//keys[XK_Up] = 0;
 	if (savex != e->xbutton.x || savey != e->xbutton.y) {
 		//Mouse moved
+		//check mouse state
+		if (gl.mouse_cursor)
+		    return;
+		//
 		int xdiff = savex - e->xbutton.x;
 		int ydiff = savey - e->xbutton.y;
 		if (++ct < 10)
@@ -505,6 +513,18 @@ int check_keys(XEvent *e)
 	switch (key) {
 		case XK_Escape:
 			return 1;
+		case XK_m:
+			//Toggles mouse cursor state
+			if (gl.mouse_cursor == 0) 
+				gl.mouse_cursor = 1;
+			else 
+				gl.mouse_cursor = 0;
+			x11.show_mouse_cursor(gl.mouse_cursor);
+			break;
+		case XK_c:
+			//Toggle credits screen on/off
+			gl.credits = !gl.credits;
+			break;
 		case XK_g:
 			show_sam();
 			break;
@@ -781,6 +801,20 @@ void physics()
 	}
 }
 
+void show_credits() 
+{
+    	int xcent = gl.xres / 2;
+	int ycent = gl.yres / 2;
+	int w = 200;
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glBegin(GL_QUADS);
+		glVertex2f( xcent-w, ycent-w);
+		glVertex2f( xcent-w, ycent+w);
+		glVertex2f( xcent+w, ycent+w);
+		glVertex2f( xcent+w, ycent-w);	
+	glEnd();
+}
+
 void render()
 {
 	Rect r;
@@ -882,6 +916,11 @@ void render()
 		glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
 		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
 		glEnd();
+	}
+	if (gl.credits) {
+		//show credits
+		show_credits();
+		return;
 	}
 }
 
