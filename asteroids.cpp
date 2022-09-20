@@ -399,7 +399,10 @@ void check_mouse(XEvent *e)
 	}
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
-			//Left button is down
+			if (gl.credits)
+			    return;
+		    
+		    	//Left button is down
 			//a little time between each bullet
 			struct timespec bt;
 			clock_gettime(CLOCK_REALTIME, &bt);
@@ -440,6 +443,9 @@ void check_mouse(XEvent *e)
 		//check mouse state
 		if (gl.mouse_cursor)
 		    return;
+		if (gl.credits)
+		    return;
+		
 		//
 		int xdiff = savex - e->xbutton.x;
 		int ydiff = savey - e->xbutton.y;
@@ -596,6 +602,8 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 void physics()
 {
+    	if (gl.credits)
+	    return;
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
