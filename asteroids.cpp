@@ -811,6 +811,10 @@ void physics()
 
 void show_credits() 
 {
+    	Rect r2;
+	r2.left = gl.xres /2.3;
+        r2.bot = gl.yres/1.8;
+	r2.center = 0;	
     	int xcent = gl.xres / 2;
 	int ycent = gl.yres / 2;
 	int w = 200;
@@ -820,7 +824,14 @@ void show_credits()
 		glVertex2f( xcent-w, ycent+w);
 		glVertex2f( xcent+w, ycent+w);
 		glVertex2f( xcent+w, ycent-w);	
-	glEnd();
+	glEnd();	
+	
+	ggprint8b(&r2, 40, 0x000000 , "Made by: ");
+	ggprint8b(&r2, 15, 0x000000 , "Nathan Rodriguez");
+	ggprint8b(&r2, 15, 0x000000 , "Jacob Flanders");
+	ggprint8b(&r2, 15, 0x000000 , "Samuel Kaing");
+	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
+	ggprint8b(&r2, 15, 0x000000 , "Raul Verdusco");
 }
 
 void render()
