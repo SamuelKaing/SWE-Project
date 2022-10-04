@@ -21,6 +21,7 @@
 #include "log.h"
 #include "fonts.h"
 #include "image.h"
+#include "skaing.h"
 
 //defined types
 typedef float Flt;
@@ -64,14 +65,15 @@ public:
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen;
+	unsigned int credits, p_screen, help;
 	Global() {
 		xres = 640;
 		yres = 480;
 		memset(keys, 0, 65536);
 		mouse_cursor = 0;	//Initial mouse state is off
 		credits = 0; 		//Credits page initially off
-		p_screen = 0;           //Pause screen initially off
+		p_screen = 0;     	//Pause screen initially off
+		help = 0;           //Help screen initially off
 	}
 } gl;
 
@@ -411,6 +413,8 @@ void check_mouse(XEvent *e)
 			    return;
 			if(gl.p_screen)
 			    return;
+			if (gl.help)
+				return
 		    
 		    	//Left button is down
 			//a little time between each bullet
@@ -457,6 +461,8 @@ void check_mouse(XEvent *e)
 		    return;
 		if(gl.p_screen)
 		    return;
+		if (gl.help)
+			return;
 		
 		//
 		int xdiff = savex - e->xbutton.x;
@@ -532,6 +538,10 @@ int check_keys(XEvent *e)
 	switch (key) {
 		case XK_Escape:
 			return 1;
+		case XK_F1:
+			//Toggle help menu
+			gl.help = manage_help_state(gl.help);
+			break;
 		case XK_m:
 			//Toggles mouse cursor state
 			if (gl.mouse_cursor == 0) 
@@ -618,10 +628,13 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 void physics()
 {
-    	if (gl.credits)
+	if (gl.credits)
 	    return;
 	if(gl.p_screen)
 	    return;
+	if (gl.help)
+		return;
+
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
@@ -984,6 +997,11 @@ void render()
 	if(gl.p_screen){
 	    //show pause screen
 	   	show_pause(gl.xres, gl.yres);
+		return;
+	}
+	if(gl.help){
+	    //show help menu
+	   	show_controls(gl.xres, gl.yres);
 		return;
 	}
 }
