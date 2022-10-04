@@ -20,6 +20,7 @@
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include "image.h"
 
 //defined types
 typedef float Flt;
@@ -56,9 +57,11 @@ extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
 
+
 class Global {
 public:
-	int xres, yres;
+	Texture t;
+    	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int credits;
@@ -175,6 +178,10 @@ public:
 		delete [] barr;
 	}
 } g;
+
+//Image Class
+
+Image image[1] = {"SInvaders.jpeg"};
 
 //X Windows variables
 class X11_wrapper {
@@ -314,7 +321,7 @@ int check_keys(XEvent *e);
 void physics();
 void render();
 extern void show_sam();
-extern void print_nate();
+//extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
 //==========================================================================
@@ -529,13 +536,13 @@ int check_keys(XEvent *e)
 			break;
 		case XK_c:
 			//Toggle credits screen on/off
-			gl.credits = !gl.credits;
+			gl.credits = !gl.credits; 
+			    //manage_state(gl.credits);
 			break;
 		case XK_g:
 			show_sam();
 			break;
 		case XK_s:
-			print_nate();
 			break;
 		case XK_Down:
 			break;
@@ -826,6 +833,26 @@ void show_credits()
 		glVertex2f( xcent+w, ycent-w);	
 	glEnd();	
 	
+	gl.t.img = &image[0];
+	glGenTextures(1, &gl.t.backText);
+	int width = gl.t.img->w;
+	int height = gl.t.img->h;
+	glBindTexture(GL_TEXTURE_2D, gl.t.backText);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);	
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
+						GL_RGB, GL_UNSIGNED_BYTE, gl.t.img->data);
+	
+	glColor3f(255.0, 255.0, 0);
+	//glBindTexture(GL_TEXTURE_2D, gl.t.backText);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 1.0); glVertex2i(gl.xres/2.5, gl.xres/2.5);
+		glTexCoord2f(0.0, 0.0); glVertex2i(gl.xres/2.5, 150);
+		glTexCoord2f(1.0, 0.0); glVertex2i(150, 150);
+		glTexCoord2f(1.0, 1.0); glVertex2i(150, gl.xres/2.5);
+	glEnd();
+
+	glColor3f(1.0, 1.0, 1.0);
 	ggprint8b(&r2, 40, 0x000000 , "Made by: ");
 	ggprint8b(&r2, 15, 0x000000 , "Nathan Rodriguez");
 	ggprint8b(&r2, 15, 0x000000 , "Jacob Flanders");
