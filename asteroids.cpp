@@ -61,13 +61,14 @@ public:
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits;
+	unsigned int credits, p_screen;
 	Global() {
 		xres = 640;
 		yres = 480;
 		memset(keys, 0, 65536);
 		mouse_cursor = 0;	//Initial mouse state is off
 		credits = 0; 		//Credits page initially off
+		p_screen = 0;           //Pause screen initially off
 	}
 } gl;
 
@@ -401,6 +402,8 @@ void check_mouse(XEvent *e)
 		if (e->xbutton.button==1) {
 			if (gl.credits)
 			    return;
+			if(gl.p_screen)
+			    return;
 		    
 		    	//Left button is down
 			//a little time between each bullet
@@ -444,6 +447,8 @@ void check_mouse(XEvent *e)
 		if (gl.mouse_cursor)
 		    return;
 		if (gl.credits)
+		    return;
+		if(gl.p_screen)
 		    return;
 		
 		//
@@ -491,6 +496,7 @@ void check_mouse(XEvent *e)
 		savey = 100;
 	}
 }
+#include "jsanchezcasa.h"
 
 int check_keys(XEvent *e)
 {
@@ -536,6 +542,9 @@ int check_keys(XEvent *e)
 			break;
 		case XK_s:
 			print_nate();
+			break;
+		case XK_p:
+			gl.p_screen = manage_state(gl.p_screen);
 			break;
 		case XK_Down:
 			break;
@@ -603,6 +612,8 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 void physics()
 {
     	if (gl.credits)
+	    return;
+	if(gl.p_screen)
 	    return;
 	Flt d0,d1,dist;
 	//Update ship position
@@ -868,6 +879,7 @@ void render()
 	glVertex2f(0.0f, 0.0f);
 	glEnd();
 	glPopMatrix();
+	if(gl.p_screen == 0){
 	if (gl.keys[XK_Up] || g.mouseThrustOn) {
 		int i;
 		//draw thrust
@@ -888,6 +900,7 @@ void render()
 			glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
 		}
 		glEnd();
+	}
 	}
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
@@ -939,6 +952,11 @@ void render()
 	if (gl.credits) {
 		//show credits
 		show_credits();
+		return;
+	}
+	if(gl.p_screen){
+	    //show pause screen
+	   	show_pause(gl.xres, gl.yres);
 		return;
 	}
 }
