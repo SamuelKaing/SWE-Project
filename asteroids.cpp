@@ -891,9 +891,8 @@ void show_credits()
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
-<<<<<<< HEAD
+
 */
-=======
 
 void start_screen()
 {
@@ -918,7 +917,7 @@ void start_screen()
 }
 
 
->>>>>>> 63917426ec7692a374f6820b7889b536ca0b61cb
+
 void render()
 {
     	//game start screen on
