@@ -22,7 +22,7 @@
 #include "fonts.h"
 #include "image.h"
 #include "skaing.h"
-
+#include "rverduzcogui.h"
 //defined types
 typedef float Flt;
 typedef float Vec[3];
@@ -65,7 +65,7 @@ public:
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help;
+	unsigned int credits, p_screen, help, gameover;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -74,6 +74,7 @@ public:
 		credits = 0; 		//Credits page initially off
 		p_screen = 0;     	//Pause screen initially off
 		help = 0;           //Help screen initially off
+		gameover =0;		    // Test for Gameover 
 	}
 } gl;
 
@@ -414,7 +415,7 @@ void check_mouse(XEvent *e)
 			if(gl.p_screen)
 			    return;
 			if (gl.help)
-				return
+				return;
 		    
 		    	//Left button is down
 			//a little time between each bullet
@@ -566,6 +567,7 @@ int check_keys(XEvent *e)
 		case XK_Down:
 			break;
 		case XK_equal:
+			gl.gameover = manage_gameover_state(gl.gameover);
 			break;
 		case XK_minus:
 			break;
@@ -882,7 +884,7 @@ void show_credits()
 	ggprint8b(&r2, 15, 0x000000 , "Jacob Flanders");
 	ggprint8b(&r2, 15, 0x000000 , "Samuel Kaing");
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
-	ggprint8b(&r2, 15, 0x000000 , "Raul Verdusco");
+	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
 
 void render()
@@ -989,11 +991,13 @@ void render()
 		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
 		glEnd();
 	}
+	
 	if (gl.credits) {
 		//show credits
 		show_credits();
 		return;
 	}
+
 	if(gl.p_screen){
 	    //show pause screen
 	   	show_pause(gl.xres, gl.yres);
@@ -1003,6 +1007,12 @@ void render()
 	    //show help menu
 	   	show_controls(gl.xres, gl.yres);
 		return;
+	}
+
+	//gameover screen
+	if (gl.gameover){
+	    show_gameover_screen(gl.xres, gl.yres);
+	    return;
 	}
 }
 
