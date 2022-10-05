@@ -23,6 +23,7 @@
 #include "image.h"
 #include "skaing.h"
 #include "rverduzcogui.h"
+#include "jflanders.h"
 //defined types
 typedef float Flt;
 typedef float Vec[3];
@@ -65,7 +66,7 @@ public:
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover;
+	unsigned int credits, p_screen, help, gameover, start;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -74,7 +75,8 @@ public:
 		credits = 0; 		//Credits page initially off
 		p_screen = 0;     	//Pause screen initially off
 		help = 0;           //Help screen initially off
-		gameover =0;		    // Test for Gameover 
+		gameover =0;        // Test for Gameover
+		start = 1;	   //Game start screen on
 	}
 } gl;
 
@@ -560,6 +562,7 @@ int check_keys(XEvent *e)
 			show_sam();
 			break;
 		case XK_s:
+			gl.start = manage_game(gl.start);
 			break;
 		case XK_p:
 			gl.p_screen = manage_state(gl.p_screen);
@@ -887,8 +890,36 @@ void show_credits()
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
 
+void start_screen()
+{
+    Rect r3;
+    r3.left = gl.xres /2.5;
+    r3.bot = gl.yres/2.0;
+    r3.center = 0;
+    int xcent = gl.xres / 2;
+    int ycent = gl.yres / 2;
+    int w = 600;
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f( xcent-w, ycent-w);
+        glVertex2f( xcent-w, ycent+w);
+        glVertex2f( xcent+w, ycent+w);
+        glVertex2f( xcent+w, ycent-w);
+    glEnd();
+
+    ggprint8b(&r3, 50, 0x000000 , "Space Invaders");
+    ggprint8b(&r3, 30, 0x000000 , "Press 'S' to start");
+
+}
+
+
 void render()
 {
+    	//game start screen on
+    	if(gl.start) {
+          start_screen();
+          return;
+        }
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
