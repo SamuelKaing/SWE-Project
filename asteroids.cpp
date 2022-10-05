@@ -325,6 +325,7 @@ int check_keys(XEvent *e);
 void physics();
 void render();
 extern void show_sam();
+extern void show_credits(Texture t, int xres, int yres);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -375,6 +376,7 @@ void init_opengl(void)
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_FOG);
 	glDisable(GL_CULL_FACE);
+	gl.t.img = &image[0];
 	//
 	//Clear the screen to black
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -841,7 +843,7 @@ void physics()
 			g.mouseThrustOn = false;
 	}
 }
-
+/*
 void show_credits() 
 {
     	Rect r2;
@@ -886,7 +888,7 @@ void show_credits()
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
-
+*/
 void render()
 {
 	Rect r;
@@ -994,11 +996,11 @@ void render()
 	
 	if (gl.credits) {
 		//show credits
-		show_credits();
+		show_credits(gl.t, gl.xres, gl.yres);
 		return;
 	}
 
-	if(gl.p_screen){
+	if (gl.p_screen){
 	    //show pause screen
 	   	show_pause(gl.xres, gl.yres);
 		return;
