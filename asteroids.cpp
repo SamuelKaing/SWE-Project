@@ -557,14 +557,13 @@ int check_keys(XEvent *e)
 			break;
 		case XK_c:
 			//Toggle credits screen on/off
-			gl.credits = !gl.credits; 
-			    //manage_state(gl.credits);
+			gl.credits = manage_state(gl.credits);
 			break;
 		case XK_g:
 			show_sam();
 			break;
 		case XK_s:
-			gl.start = manage_game(gl.start);
+			gl.start = 0;
 			break;
 		case XK_p:
 			gl.p_screen = manage_state(gl.p_screen);
