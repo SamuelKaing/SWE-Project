@@ -52,13 +52,16 @@ Image::Image(const char *fname){
 
 void show_credits(Texture t, int xres, int yres) 
 {
+	int imgw = 50;
     	Rect r2;
-	r2.left = xres /2.3;
-        r2.bot = yres/1.8;
+	r2.left = xres /2 - imgw;
+        r2.bot = yres/2;
 	r2.center = 0;	
     	int xcent = xres / 2;
 	int ycent = yres / 2;
 	int w = 200;
+	int iycent = ycent + 2*imgw;
+	
 	glColor3f(1.0f, 1.0f, 0.0f);
 	glBegin(GL_QUADS);
 		glVertex2f( xcent-w, ycent-w);
@@ -80,10 +83,10 @@ void show_credits(Texture t, int xres, int yres)
 	glColor3f(255.0, 255.0, 0);
 	//glBindTexture(GL_TEXTURE_2D, gl.t.backText);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 1.0); glVertex2i(r2.bot/2, r2.bot/2);
-		glTexCoord2f(0.0, 0.0); glVertex2i(r2.bot/2, r2.left*2);
-		glTexCoord2f(1.0, 0.0); glVertex2i(r2.left*2, r2.left*2 );
-		glTexCoord2f(1.0, 1.0); glVertex2i(r2.left*2, r2.bot/2);
+		glTexCoord2f(0.0, 1.0); glVertex2i(xcent-imgw, iycent-imgw);
+		glTexCoord2f(0.0, 0.0); glVertex2i(xcent-imgw, iycent+imgw);
+		glTexCoord2f(1.0, 0.0); glVertex2i(xcent+imgw,iycent+imgw);
+		glTexCoord2f(1.0, 1.0); glVertex2i(xcent+imgw,iycent-imgw);
 	glEnd();
 
 	glColor3f(1.0, 1.0, 1.0);
