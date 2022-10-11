@@ -640,7 +640,8 @@ void physics()
 	    return;
 	if (gl.help)
 		return;
-
+        if (gl.gameover)
+	    return;
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
