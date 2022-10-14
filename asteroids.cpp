@@ -91,7 +91,7 @@ public:
 public:
 	Ship() {
 		pos[0] = (Flt)(gl.xres/2);
-		pos[1] = (Flt)(gl.yres/2);
+		pos[1] = (Flt)(gl.yres/4);
 		pos[2] = 0.0f;
 		VecZero(dir);
 		VecZero(vel);
@@ -168,7 +168,7 @@ public:
 			a->color[0] = 0.8;
 			a->color[1] = 0.8;
 			a->color[2] = 0.7;
-			a->vel[0] = (Flt)(rnd()*2.0-1.0);
+			a->vel[0] = (Flt)(rnd()*2.0-1.0); //(Flt)(rnd()*2.0-1.0
 			a->vel[1] = (Flt)(rnd()*2.0-1.0);
 			//std::cout << "asteroid" << std::endl;
 			//add to front of linked list
@@ -327,6 +327,7 @@ int check_keys(XEvent *e);
 void physics();
 void render();
 extern void show_sam();
+extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
@@ -414,7 +415,7 @@ void check_mouse(XEvent *e)
 	}
 	if (e->type == ButtonPress) {
 		if (e->xbutton.button==1) {
-			if (gl.credits)
+			if (gl.credits || gl.mouse_cursor)
 			    return;
 			if(gl.p_screen)
 			    return;
@@ -500,8 +501,8 @@ void check_mouse(XEvent *e)
 			g.ship.vel[1] += ydir * (float)ydiff * 0.01f;
 			Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 												g.ship.vel[1]*g.ship.vel[1]);
-			if (speed > 10.0f) {
-				speed = 10.0f;
+			if (speed > 5.0f) {
+				speed = 5.0f;
 				normalize2d(g.ship.vel);
 				g.ship.vel[0] *= speed;
 				g.ship.vel[1] *= speed;
@@ -532,11 +533,13 @@ int check_keys(XEvent *e)
 		return 0;
 	}
 	if (e->type == KeyPress) {
-		//std::cout << "press" << std::endl;
-		gl.keys[key]=1;
-		if (key == XK_Shift_L || key == XK_Shift_R) {
+	    	if (!gl.mouse_cursor){
+		    //std::cout << "press" << std::endl;
+		    gl.keys[key]=1;
+		    if (key == XK_Shift_L || key == XK_Shift_R) {
 			shift = 1;
 			return 0;
+		    }
 		}
 	}
 	(void)shift;
@@ -547,12 +550,9 @@ int check_keys(XEvent *e)
 			//Toggle help menu
 			gl.help = manage_help_state(gl.help);
 			break;
-		case XK_m:
+		case XK_m:	
 			//Toggles mouse cursor state
-			if (gl.mouse_cursor == 0) 
-				gl.mouse_cursor = 1;
-			else 
-				gl.mouse_cursor = 0;
+			gl.mouse_cursor ^= 1;
 			x11.show_mouse_cursor(gl.mouse_cursor);
 			break;
 		case XK_c:
@@ -634,12 +634,12 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 void physics()
 {
-	if (gl.credits)
+	if (gl.credits || gl.mouse_cursor)
 	    return;
-	if(gl.p_screen)
+	if (gl.p_screen)
 	    return;
 	if (gl.help)
-		return;
+	    return;
         if (gl.gameover)
 	    return;
 	Flt d0,d1,dist;
@@ -957,8 +957,8 @@ void render()
 	glVertex2f(0.0f, 0.0f);
 	glEnd();
 	glPopMatrix();
-	if(gl.p_screen == 0){
-	if (gl.keys[XK_Up] || g.mouseThrustOn) {
+	if(gl.p_screen == 0 || gl.mouse_cursor == 0){
+	    if (gl.keys[XK_Up] || g.mouseThrustOn) {
 		int i;
 		//draw thrust
 		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
@@ -968,17 +968,17 @@ void render()
 		Flt xs,ys,xe,ye,r;
 		glBegin(GL_LINES);
 		for (i=0; i<16; i++) {
-			xs = -xdir * 11.0f + rnd() * 4.0 - 2.0;
-			ys = -ydir * 11.0f + rnd() * 4.0 - 2.0;
-			r = rnd()*40.0+40.0;
-			xe = -xdir * r + rnd() * 18.0 - 9.0;
-			ye = -ydir * r + rnd() * 18.0 - 9.0;
-			glColor3f(rnd()*.3+.7, rnd()*.3+.7, 0);
-			glVertex2f(g.ship.pos[0]+xs,g.ship.pos[1]+ys);
-			glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
+		    xs = -xdir * 11.0f + rnd() * 4.0 - 2.0;
+		    ys = -ydir * 11.0f + rnd() * 4.0 - 2.0;
+		    r = rnd()*40.0+40.0;
+		    xe = -xdir * r + rnd() * 18.0 - 9.0;
+		    ye = -ydir * r + rnd() * 18.0 - 9.0;
+		    glColor3f(rnd()*.3+.7, rnd()*.3+.7, 0);
+		    glVertex2f(g.ship.pos[0]+xs,g.ship.pos[1]+ys);
+		    glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
 		}
 		glEnd();
-	}
+	    }
 	}
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
@@ -1033,7 +1033,10 @@ void render()
 		show_credits(gl.t, gl.xres, gl.yres);
 		return;
 	}
-
+	if (gl.mouse_cursor){
+	    menu(gl.xres, gl.yres);
+	    return;
+	}
 	if (gl.p_screen){
 	    //show pause screen
 	   	show_pause(gl.xres, gl.yres);

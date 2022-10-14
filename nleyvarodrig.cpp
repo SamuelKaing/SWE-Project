@@ -98,3 +98,21 @@ void show_credits(Texture t, int xres, int yres)
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
 
+void menu(int xres, int yres){ 
+    	Rect menu;
+	int w = 50;
+    	menu.left = xres/2;
+	menu.bot = yres/2;
+   	int xcent = xres / 2;
+    	int ycent = yres / 2;
+
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glBegin(GL_QUADS);
+		glVertex2f( xcent-w, ycent-w);
+		glVertex2f( xcent-w, ycent+w);
+		glVertex2f( xcent+w, ycent+w);
+		glVertex2f( xcent+w, ycent-w);	
+	glEnd();	
+}
+
+
