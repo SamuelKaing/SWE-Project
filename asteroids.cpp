@@ -66,7 +66,7 @@ public:
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover, start;
+	unsigned int credits, p_screen, help, gameover, start, test_mode;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -77,6 +77,7 @@ public:
 		help = 0;           //Help screen initially off
 		gameover =0;        // Test for Gameover
 		start = 1;	   //Game start screen on
+		test_mode = 0;
 	}
 } gl;
 
@@ -558,6 +559,10 @@ int check_keys(XEvent *e)
 		case XK_c:
 			//Toggle credits screen on/off
 			gl.credits = manage_state(gl.credits);
+			break;
+		case XK_x:
+			//Toggle Jacob's feature mode
+			gl.test_mode = manage_mode(gl.test_mode);
 			break;
 		case XK_g:
 			show_sam();
@@ -1046,6 +1051,12 @@ void render()
 	    //show help menu
 	   	show_controls(gl.xres, gl.yres);
 		return;
+	}
+
+	if(gl.test_mode) {
+	    //show Jacob's feature mode
+	    tester_mode(gl.xres, gl.yres);
+	    return;
 	}
 
 	//gameover screen
