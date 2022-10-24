@@ -24,6 +24,7 @@
 #include "skaing.h"
 #include "rverduzcogui.h"
 #include "jflanders.h"
+#include "jsanchezcasa.h"
 //defined types
 typedef float Flt;
 typedef float Vec[3];
@@ -66,7 +67,7 @@ public:
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover, start, test_mode;
+	unsigned int credits, p_screen, help, gameover, start, test_mode, juanfeature;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -78,6 +79,7 @@ public:
 		gameover =0;        // Test for Gameover
 		start = 1;	   //Game start screen on
 		test_mode = 0;
+		juanfeature=0;
 	}
 } gl;
 
@@ -516,7 +518,7 @@ void check_mouse(XEvent *e)
 		savey = 100;
 	}
 }
-#include "jsanchezcasa.h"
+
 
 int check_keys(XEvent *e)
 {
@@ -566,6 +568,9 @@ int check_keys(XEvent *e)
 			break;
 		case XK_g:
 			show_sam();
+			break;
+		case XK_h:
+			gl.juanfeature = manage_state(gl.juanfeature);
 			break;
 		case XK_s:
 			gl.start = 0;
@@ -1063,6 +1068,9 @@ void render()
 	if (gl.gameover){
 	    show_gameover_screen(gl.xres, gl.yres);
 	    return;
+	}
+	if(gl.juanfeature){
+	    juanfeature(gl.xres,gl.yres);
 	}
 }
 
