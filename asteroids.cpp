@@ -64,7 +64,7 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 class Global {
 public:
 	Texture t, t_boss;
-    	int xres, yres;
+	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature;
@@ -79,7 +79,7 @@ public:
 		help = 0;           //Help screen initially off
 		gameover = 0;        // Test for Gameover
 		start = 1;	   //Game start screen on
-    boss_rush = 0;		//Boss Rush mode initially off
+    	boss_rush = 0;		//Boss Rush mode initially off
 		test_mode = 0;
 		juanfeature = 0;
 	}
@@ -193,7 +193,6 @@ public:
 //Image Class
 
 Image image[1] = {"SInvaders.jpeg"};
-Image boss_img[1] = {"boss_laser.png"};
 
 //X Windows variables
 class X11_wrapper {
@@ -887,63 +886,6 @@ void physics()
 			g.mouseThrustOn = false;
 	}
 }
-/*
-void show_credits() 
-{
-    	Rect r2;
-	r2.left = gl.xres /2.3;
-        r2.bot = gl.yres/1.8;
-	r2.center = 0;	
-    	int xcent = gl.xres / 2;
-	int ycent = gl.yres / 2;
-	int w = 200;
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glBegin(GL_QUADS);
-		glVertex2f( xcent-w, ycent-w);
-		glVertex2f( xcent-w, ycent+w);
-		glVertex2f( xcent+w, ycent+w);
-		glVertex2f( xcent+w, ycent-w);	
-	glEnd();	
-	
-	gl.t.img = &image[0];
-	glGenTextures(1, &gl.t.backText);
-	int width = gl.t.img->w;
-	int height = gl.t.img->h;
-	glBindTexture(GL_TEXTURE_2D, gl.t.backText);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);	
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
-						GL_RGB, GL_UNSIGNED_BYTE, gl.t.img->data);
-	
-	glColor3f(255.0, 255.0, 0);
-
-	gl.t_boss.img = &boss_img[0];
-	glGenTextures(1, &gl.t_boss.backText);
-	width = gl.t_boss.img->w;
-	height = gl.t_boss.img->h;
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);	
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
-						GL_RGB, GL_UNSIGNED_BYTE, gl.t_boss.img->data);
-
-	//glBindTexture(GL_TEXTURE_2D, gl.t.backText);
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 1.0); glVertex2i(gl.xres/2.5, gl.xres/2.5);
-		glTexCoord2f(0.0, 0.0); glVertex2i(gl.xres/2.5, 150);
-		glTexCoord2f(1.0, 0.0); glVertex2i(150, 150);
-		glTexCoord2f(1.0, 1.0); glVertex2i(150, gl.xres/2.5);
-	glEnd();
-
-	glColor3f(1.0, 1.0, 1.0);
-	ggprint8b(&r2, 40, 0x000000 , "Made by: ");
-	ggprint8b(&r2, 15, 0x000000 , "Nathan Rodriguez");
-	ggprint8b(&r2, 15, 0x000000 , "Jacob Flanders");
-	ggprint8b(&r2, 15, 0x000000 , "Samuel Kaing");
-	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
-	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
-}
-
-
-*/
 
 void start_screen()
 {
@@ -966,7 +908,6 @@ void start_screen()
     ggprint8b(&r3, 30, 0x000000 , "Press 'S' to start");
 
 }
-
 
 void render()
 {
@@ -1100,7 +1041,7 @@ void render()
 	}
 
 	//gameover screen
-	if (gl.gameover){
+	if (gl.gameover) {
 	    show_gameover_screen(gl.xres, gl.yres);
 	    return;
 	}
@@ -1108,8 +1049,9 @@ void render()
 	if (gl.boss_rush) {
 		start_boss_rush(gl.xres, gl.yres);
 		return;
+	}
 
-	if(gl.juanfeature){
+	if(gl.juanfeature) {
 	    juanfeature(gl.xres,gl.yres);
 	}
 }
