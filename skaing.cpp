@@ -3,6 +3,24 @@
 #include <stdio.h>
 #include <GL/glx.h>
 #include "fonts.h"
+#include "skaing.h"
+
+//Fix mouse movement controls
+//Create transparent hitboxes
+//Import image to screen
+
+class Boss {
+    public:
+        float w;
+        float pos[2];
+        int movement;
+        Boss() {}
+        Boss(float wid, float pos_x, float pos_y) {
+            w = wid;
+            pos[0] = pos_x;
+            pos[1] = pos_y;
+        }
+} boss;
 
 void show_sam()
 {
@@ -10,6 +28,12 @@ void show_sam()
 }
 
 unsigned int manage_help_state(unsigned int s)
+{
+    s = !s;
+    return s;
+}
+
+unsigned int boss_rush_state(unsigned int s)
 {
     s = !s;
     return s;
@@ -52,4 +76,39 @@ void show_controls(int xres, int yres)
     ggprint10(&r2, 40, 0x2e281, "Pause -- p");
     ggprint10(&r2, 40, 0x2e281, "Credits -- c");
     ggprint10(&r2, 40, 0x2e281, "Jacob's Feature mode -- x");
+}
+
+void start_boss_rush(int xres, int yres) 
+{
+    glPushMatrix();
+    glColor4f(1.0, 0.0, 0.0, 0.2);
+    glTranslatef(boss.pos[0], boss.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f( -boss.w, -boss.w);
+        glVertex2f( -boss.w, boss.w);
+        glVertex2f( boss.w, boss.w);
+        glVertex2f( boss.w, -boss.w);
+    glEnd();
+    glPopMatrix();
+
+    if (boss.pos[0] <= 0)
+        boss.movement = 1;
+    if (boss.pos[0] >= xres)
+        boss.movement = 0;
+
+    //move to left edge
+    if (boss.movement == 0) {
+        boss.pos[0] -= 3;
+    }
+    if (boss.movement == 1) {
+        boss.pos[0] += 3;
+    }
+}
+
+void make_boss(int xres, int yres)
+{
+    boss.w = 20;
+    boss.pos[0] = xres / 2;
+    boss.pos[1] = yres - (yres / 4);
+    boss.movement = 0;
 }

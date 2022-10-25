@@ -2,10 +2,28 @@
 //  source file:
 //  GAMEOVER screen
 //
+#include <cstdlib>
+#include <cmath>
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#define rnd() (((Flt)rand())/(Flt)RAND_MAX)
+#define random(a) (rand()%a)
+#define VecZero(v) (v)[0]=0.0,(v)[1]=0.0,(v)[2]=0.0
+#define MakeVector(x, y, z, v) (v)[0]=(x),(v)[1]=(y),(v)[2]=(z)
+#define VecCopy(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];(b)[2]=(a)[2]
+#define VecDot(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1]+(a)[2]*(b)[2])
+#define VecSub(a,b,c) (c)[0]=(a)[0]-(b)[0]; \
+                        (c)[1]=(a)[1]-(b)[1]; \
 
+typedef float Vec[3];
+
+class Global {
+public:
+
+       Vec weapon_one;
+
+} Gl;
 
 unsigned int manage_gameover_state(unsigned int g)
 {
@@ -31,30 +49,30 @@ void show_gameover_screen( int xres, int yres)
                 glVertex2f( xcent+width, ycent-width);
 
         glEnd();
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
            glEnable(GL_BLEND);
            // draw a border using a triangle strip
        glColor3f(1.0, 0.0, 0.0);
        glColor4f(1.0, 0.0, 0.0, 0.5);
        glBegin(GL_TRIANGLE_STRIP);
        int w = 200;
-              glVertex2i(0, 0 );
+          glVertex2i(0, 0 );
           glVertex2i(0+w, w );
 
           glVertex2i(0, yres);
           glVertex2i(0+w, yres-w );
 
           glVertex2i(xres, yres );
-                  glVertex2i(xres - w, yres -  w );
+          glVertex2i(xres - w, yres -  w );
 
-                  glVertex2i(xres, 0);
-                  glVertex2i(xres-w, w );
+          glVertex2i(xres, 0);
+          glVertex2i(xres-w, w );
 
           glVertex2i( 0,0) ;
           glVertex2i(0 + w, w);
 
           glEnd();
-      glDisable(GL_BLEND);
+       glDisable(GL_BLEND);
 
 
         ggprint16(&r2, 40, 0x000000 , "xx_GAMEOVER_xx ");
@@ -63,8 +81,76 @@ void show_gameover_screen( int xres, int yres)
 
 }
 
-void feature_weapons() {
+unsigned int manage_feature_weapons_state(unsigned int w ) {
     // generates weapons at random times for player
     //
+    w = w ^1;
+    return w;
 }
+
+
+void show_feature_weapons(int xres, int yres, int weapon1) {
+
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     glEnable(GL_BLEND);
+           // draw a border using a triangle strip
+       glColor3f(0.0, 1.0, 0.0);
+       glColor4f(0.0, 1.0, 0.0, 0.5);
+       glBegin(GL_TRIANGLE_STRIP);
+       int width2 = 20;
+              glVertex2i(0, 0 );
+              glVertex2i(0+width2, width2 );
+
+              glVertex2i(0, yres);
+              glVertex2i(0+width2, yres-width2 );
+
+              glVertex2i(xres, yres );
+              glVertex2i(xres - width2, yres -  width2 );
+
+              glVertex2i(xres, 0);
+              glVertex2i(xres-width2, width2 );
+
+              glVertex2i( 0,0) ;
+              glVertex2i(0 + width2, width2);
+
+      glEnd();
+      glDisable(GL_BLEND);
+
+
+    if (weapon1 != 0) {
+        Gl.weapon_one[0] = rand() % (xres - 20);
+        Gl.weapon_one[1] = rand() % (40);
+        glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_QUADS);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
+
+             glEnd();
+    }
+
+/*
+     if (weapon2 != 0) {
+         glBegins(GL_QUADS);
+             glVertex2i(p1[0] - 5, p1[1] -5);
+             glVertex2i(p1[0] - 5, p1[1] +5);
+             glVertex2i(p1[0] + 5, p1[1] +5);
+             glVertex2i(p1[0] + 5, p1[1] -5);
+
+     if (weapon3 != 0) {
+         glBegins(GL_QUADS);
+             glVertex2i(p1[0] - 5, p1[1] -5);
+             glVertex2i(p1[0] - 5, p1[1] +5);
+             glVertex2i(p1[0] + 5, p1[1] +5);
+             glVertex2i(p1[0] + 5, p1[1] -5);
+
+*/
+}
+
+
+
+
+
+
 
