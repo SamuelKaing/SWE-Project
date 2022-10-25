@@ -8,6 +8,7 @@
 #include "fonts.h"
 #include "image.h"
 
+
 Texture::~Texture() { }
 Texture::Texture() { }
 
@@ -97,7 +98,8 @@ void show_credits(Texture t, int xres, int yres)
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
-
+//On Hold
+/*
 void menu(int xres, int yres){ 
     	Rect menu;
 	int w = 50;
@@ -113,6 +115,15 @@ void menu(int xres, int yres){
 		glVertex2f( xcent+w, ycent+w);
 		glVertex2f( xcent+w, ycent-w);	
 	glEnd();	
-}
+}*/
 
+void ship_movement(int xres, int yres){
+    	glColor3f(0.0f, 0.0f, 1.0f);
+    	glBegin(GL_QUADS);
+		glVertex2f(0, 0);
+		glVertex2f(0, yres);
+		glVertex2f(xres, yres);
+		glVertex2f(xres, 0);
+    	glEnd();
+}
 

@@ -51,4 +51,5 @@ void show_controls(int xres, int yres)
     ggprint10(&r2, 40, 0x2e281, "Shoot -- Spacebar");
     ggprint10(&r2, 40, 0x2e281, "Pause -- p");
     ggprint10(&r2, 40, 0x2e281, "Credits -- c");
-}
+    ggprint10(&r2, 40, 0x2e281, "Ship Movement Mode -- l");
+    }
