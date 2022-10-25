@@ -625,7 +625,7 @@ int check_keys(XEvent *e)
 		case XK_equal:
 			gl.gameover = manage_gameover_state(gl.gameover);
 			break;
-		case XK_minus:
+		case XK_w:
 			gl.feature_weapons = manage_feature_weapons_state
                                              (gl.feature_weapons);
                         /* if (gl.feature_weapons == 1) {
