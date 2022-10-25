@@ -67,8 +67,8 @@ public:
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature;
-
+	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
+        int weapon1;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -82,6 +82,8 @@ public:
     	boss_rush = 0;		//Boss Rush mode initially off
 		test_mode = 0;
 		juanfeature = 0;
+		feature_weapons = 0;
+		weapon1 = 0;
 	}
 } gl;
 
@@ -185,7 +187,10 @@ public:
 		}
 		clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	}
-	~Game() {
+	~Game() {extern unsigned int manage_feature_weapons_state(unsigned int w);
+
+extern void show_feature_weapons(int xres, int yres, int weapon1);
+
 		delete [] barr;
 	}
 } g;
@@ -606,6 +611,13 @@ int check_keys(XEvent *e)
 			gl.gameover = manage_gameover_state(gl.gameover);
 			break;
 		case XK_minus:
+			gl.feature_weapons = manage_feature_weapons_state
+                                             (gl.feature_weapons);
+                        /* if (gl.feature_weapons == 1) {
+                              gl.p1[0] = rand() % (gl.xres - 20);
+                              gl.p1[1] = rand() % (40);
+                         }*/
+
 			break;
 	}
 	return 0;
@@ -1054,6 +1066,13 @@ void render()
 	if(gl.juanfeature) {
 	    juanfeature(gl.xres,gl.yres);
 	}
+	
+       	if (gl.feature_weapons) {
+            gl.weapon1 =1;
+            show_feature_weapons(gl.xres, gl.yres, gl.weapon1);
+            return;
+        }
+
 }
 
 
