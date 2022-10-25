@@ -658,6 +658,9 @@ void physics()
 	    return;
         if (gl.gameover)
 	    return;
+	if(gl.start)
+	    return;
+	
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
@@ -790,6 +793,29 @@ void physics()
 			break;
 		a = a->next;
 	}
+
+	if(gl.juanfeature){
+	a = g.ahead;	
+	while(a){
+		Flt test1,test2;
+		test1 = g.ship.pos[0] - a->pos[0];
+		test2 = g.ship.pos[1] - a->pos[1];
+		dist = (test1*test1 + test2*test2);
+		if (dist < (a->radius*a->radius)){
+		    gl.gameover = 1;
+		}
+	
+		if (a == NULL)
+		    break;
+		a = a ->next;
+		}
+	}
+
+
+
+
+
+
 	//---------------------------------------------------
 	//check keys pressed now
 	//
@@ -1154,7 +1180,7 @@ void render()
 	    return;
 	}
 	if(gl.juanfeature){
-	    juanfeature(gl.xres,gl.yres);
+	    juanfeature(gl.xres, gl.yres);
 	}
 }
 
