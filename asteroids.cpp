@@ -818,6 +818,23 @@ void physics()
 			break;
 		a = a->next;
 	}
+
+	if(gl.juanfeature)	{
+		a = g.ahead;
+		while(a){
+			Flt test1,test2;
+			test1 = g.ship.pos[0] - a->pos[0];
+			test2 = g.ship.pos[1] - a->pos[1];
+			dist = (test1*test1 + test2*test2);
+			if (dist < (a->radius*a->radius)){
+				gl.gameover = 1;
+			}
+			if (a == NULL)
+				break;
+			a = a ->next;
+		}
+	}
+
 	//---------------------------------------------------
 	//check keys pressed now
 	if (gl.keys[XK_Left]) {
@@ -923,6 +940,10 @@ void start_screen()
 
 void render()
 {
+	if (gl.start) {
+		start_screen();
+		return;
+	}
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
