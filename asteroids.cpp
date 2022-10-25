@@ -63,11 +63,12 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 
 class Global {
 public:
-	Texture t;
+	Texture t, t_boss;
     	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover, start, test_mode, juanfeature;
+	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature;
+
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -76,10 +77,11 @@ public:
 		credits = 0; 		//Credits page initially off
 		p_screen = 0;     	//Pause screen initially off
 		help = 0;           //Help screen initially off
-		gameover =0;        // Test for Gameover
+		gameover = 0;        // Test for Gameover
 		start = 1;	   //Game start screen on
+    boss_rush = 0;		//Boss Rush mode initially off
 		test_mode = 0;
-		juanfeature=0;
+		juanfeature = 0;
 	}
 } gl;
 
@@ -191,6 +193,7 @@ public:
 //Image Class
 
 Image image[1] = {"SInvaders.jpeg"};
+Image boss_img[1] = {"boss_laser.png"};
 
 //X Windows variables
 class X11_wrapper {
@@ -332,6 +335,7 @@ void render();
 extern void show_sam();
 extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
+
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -483,39 +487,52 @@ void check_mouse(XEvent *e)
 		//std::flush;
 		if (xdiff > 0) {
 			//std::cout << "xdiff: " << xdiff << std::endl << std::flush;
-			g.ship.angle += 0.05f * (float)xdiff;
-			if (g.ship.angle >= 360.0f)
-				g.ship.angle -= 360.0f;
+			//g.ship.angle += 0.05f * (float)xdiff;
+			//if (g.ship.angle >= 360.0f)
+			//	g.ship.angle -= 360.0f;
+			g.ship.pos[0] -= 3;
 		}
 		else if (xdiff < 0) {
 			//std::cout << "xdiff: " << xdiff << std::endl << std::flush;
-			g.ship.angle += 0.05f * (float)xdiff;
-			if (g.ship.angle < 0.0f)
-				g.ship.angle += 360.0f;
+			//g.ship.angle += 0.05f * (float)xdiff;
+			//if (g.ship.angle < 0.0f)
+			//	g.ship.angle += 360.0f;
+			g.ship.pos[0] += 3;
 		}
 		if (ydiff > 0) {
+		    
 			//apply thrust
 			//convert ship angle to radians
-			Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
-			//convert angle to a vector
-			Flt xdir = cos(rad);
-			Flt ydir = sin(rad);
-			g.ship.vel[0] += xdir * (float)ydiff * 0.01f;
-			g.ship.vel[1] += ydir * (float)ydiff * 0.01f;
-			Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
-												g.ship.vel[1]*g.ship.vel[1]);
-			if (speed > 5.0f) {
-				speed = 5.0f;
-				normalize2d(g.ship.vel);
-				g.ship.vel[0] *= speed;
-				g.ship.vel[1] *= speed;
-			}
-			g.mouseThrustOn = true;
-			clock_gettime(CLOCK_REALTIME, &g.mouseThrustTimer);
+			//Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+			////convert angle to a vector
+			//Flt xdir = cos(rad);
+			//Flt ydir = sin(rad);
+			////g.ship.vel[0] += xdir * (float)ydiff * 0.01f;
+			//g.ship.vel[1] += ydir * (float)ydiff * 0.01f;
+			//Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
+			//									g.ship.vel[1]*g.ship.vel[1]);
+			//if (speed > 10.0f) {
+			//	speed = 10.0f;
+			//	normalize2d(g.ship.vel);
+			//	g.ship.vel[0] *= speed;
+			//	g.ship.vel[1] *= speed;
+			//}
+			//g.mouseThrustOn = true;
+			//clock_gettime(CLOCK_REALTIME, &g.mouseThrustTimer);
+			
+		    g.ship.pos[1] += 3;
+
 		}
+		if (ydiff < 0) {
+		    g.ship.pos[1] -= 3;
+		}
+
 		x11.set_mouse_position(100,100);
 		savex = 100;
 		savey = 100;
+	} else {
+	    //g.ship.vel[0] = 0;
+	    //g.ship.vel[1] = 0;
 	}
 }
 
@@ -553,7 +570,13 @@ int check_keys(XEvent *e)
 			//Toggle help menu
 			gl.help = manage_help_state(gl.help);
 			break;
-		case XK_m:	
+
+		case XK_b:
+			gl.boss_rush = boss_rush_state(gl.boss_rush);
+			//make boss
+			make_boss(gl.xres, gl.yres);
+			break;
+		case XK_m:
 			//Toggles mouse cursor state
 			gl.mouse_cursor ^= 1;
 			x11.show_mouse_cursor(gl.mouse_cursor);
@@ -787,14 +810,16 @@ void physics()
 	//---------------------------------------------------
 	//check keys pressed now
 	if (gl.keys[XK_Left]) {
-		g.ship.angle += 4.0;
-		if (g.ship.angle >= 360.0f)
-			g.ship.angle -= 360.0f;
+		//g.ship.angle += 4.0;
+		//if (g.ship.angle >= 360.0f)
+		//	g.ship.angle -= 360.0f;
+		g.ship.pos[0] -= 10;/////
 	}
 	if (gl.keys[XK_Right]) {
-		g.ship.angle -= 4.0;
-		if (g.ship.angle < 0.0f)
-			g.ship.angle += 360.0f;
+		//g.ship.angle -= 4.0;
+		//if (g.ship.angle < 0.0f)
+		//	g.ship.angle += 360.0f;
+		g.ship.pos[0] += 10;
 	}
 	if (gl.keys[XK_Up]) {
 		//apply thrust
@@ -803,16 +828,22 @@ void physics()
 		//convert angle to a vector
 		Flt xdir = cos(rad);
 		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
+		//g.ship.vel[0] += xdir*0.05f;
+		//g.ship.vel[1] += ydir*0.05f;
 		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
 				g.ship.vel[1]*g.ship.vel[1]);
 		if (speed > 10.0f) {
 			speed = 10.0f;
 			normalize2d(g.ship.vel);
-			g.ship.vel[0] *= speed;
-			g.ship.vel[1] *= speed;
+			//g.ship.vel[0] *= speed;
+			//g.ship.vel[1] *= speed;
 		}
+		
+		g.ship.pos[1] += 8;
+	}
+	if (gl.keys[XK_Down]) {
+		g.ship.pos[1] -= 8;
+		//g.ship.vel[1] -= 0.08;
 	}
 	if (gl.keys[XK_space]) {
 		//a little time between each bullet
@@ -885,6 +916,15 @@ void show_credits()
 						GL_RGB, GL_UNSIGNED_BYTE, gl.t.img->data);
 	
 	glColor3f(255.0, 255.0, 0);
+
+	gl.t_boss.img = &boss_img[0];
+	glGenTextures(1, &gl.t_boss.backText);
+	width = gl.t_boss.img->w;
+	height = gl.t_boss.img->h;
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);	
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
+						GL_RGB, GL_UNSIGNED_BYTE, gl.t_boss.img->data);
+
 	//glBindTexture(GL_TEXTURE_2D, gl.t.backText);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 1.0); glVertex2i(gl.xres/2.5, gl.xres/2.5);
@@ -901,6 +941,7 @@ void show_credits()
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
+
 
 */
 
@@ -927,14 +968,8 @@ void start_screen()
 }
 
 
-
 void render()
 {
-    	//game start screen on
-    	if(gl.start) {
-          start_screen();
-          return;
-        }
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
@@ -1069,6 +1104,11 @@ void render()
 	    show_gameover_screen(gl.xres, gl.yres);
 	    return;
 	}
+
+	if (gl.boss_rush) {
+		start_boss_rush(gl.xres, gl.yres);
+		return;
+
 	if(gl.juanfeature){
 	    juanfeature(gl.xres,gl.yres);
 	}
