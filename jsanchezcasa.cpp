@@ -61,4 +61,35 @@ void juanfeature(int xres, int yres){
 
          glEnd();
          glDisable(GL_BLEND);
+
+	Rect r3;
+        r3.left = xres/2.75;
+	r3.bot = yres-20;
+        r3.center = 0;  
+
+	 ggprint16(&r3, 40, 0xff0000, "COLLISION MODE");
+
+
+
+
+
+
+
+//	if(gl.juanfeature){
+//        a = g.ahead;
+//        while(a){
+//                Flt test1,test2;
+//                test1 = g.ship.pos[0] - a->pos[0];
+//                test2 = g.ship.pos[1] - a->pos[1];
+//                dist = (test1*test1 + test2*test2);
+//                if (dist < (a->radius*a->radius)){
+//                    gl.gameover = 1;
+//                }
+//                if (a == NULL)
+//                    break;
+//                a = a ->next;
+//                }
+//        }
+
+
 }
