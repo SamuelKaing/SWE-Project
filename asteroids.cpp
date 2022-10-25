@@ -1100,7 +1100,7 @@ void render()
 	}
 
 	//gameover screen
-	if (gl.gameover){
+	if (gl.gameover) {
 	    show_gameover_screen(gl.xres, gl.yres);
 	    return;
 	}
@@ -1108,8 +1108,9 @@ void render()
 	if (gl.boss_rush) {
 		start_boss_rush(gl.xres, gl.yres);
 		return;
+	}
 
-	if(gl.juanfeature){
+	if(gl.juanfeature) {
 	    juanfeature(gl.xres,gl.yres);
 	}
 }
