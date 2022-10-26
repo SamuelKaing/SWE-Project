@@ -68,8 +68,7 @@ public:
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int credits,ship_movement, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-       int weapon;
-
+        
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -84,7 +83,6 @@ public:
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
-		weapon = 0;
 		
 	}
 } gl;
@@ -630,9 +628,10 @@ int check_keys(XEvent *e)
 		case XK_w:
 			gl.feature_weapons = manage_feature_weapons_state
                                              (gl.feature_weapons);
-                        if (gl.feature_weapons == 1) {
-                            gl.weapon = rand() % 3 + 1;
-			}
+                        /* if (gl.feature_weapons == 1) {
+                              gl.p1[0] = rand() % (gl.xres - 20);
+                              gl.p1[1] = rand() % (40);
+                         }*/
 
 			break;
 		case XK_l:
@@ -1028,7 +1027,7 @@ void start_screen()
         glVertex2f( xcent+w, ycent-w);
     glEnd();
 
-    ggprint8b(&r3, 50, 0x000000 , "Space Invaders");
+    ggprint16(&r3, 50, 0x000000 , "SPACE INVADERS");
     ggprint8b(&r3, 30, 0x000000 , "Press 'S' to start");
 
 }
@@ -1048,6 +1047,8 @@ void render()
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
+	ggprint8b(&r, 16, 0x00ffff00, "F1 for help");
+
 	//-------------------------------------------------------------------------
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
@@ -1188,7 +1189,7 @@ void render()
 	
        	if (gl.feature_weapons) {
             
-            show_feature_weapons(gl.xres, gl.yres, gl.weapon);
+            show_feature_weapons(gl.xres, gl.yres);
             return;
         }
 
