@@ -20,9 +20,9 @@ typedef float Vec[3];
 
 class Global {
 public:
-
+       int weapon_display;
        Vec weapon_one;
-
+       
 } Gl;
 
 unsigned int manage_gameover_state(unsigned int g)
@@ -89,10 +89,8 @@ unsigned int manage_feature_weapons_state(unsigned int w ) {
 }
 
 
-void show_feature_weapons(int xres, int yres) {
-     int weapon_display;
-     weapon_display = rand() % 3+1;
-
+void show_feature_weapons(int xres, int yres, int weapon) {
+     
      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
      glEnable(GL_BLEND);
            // draw a border using a triangle strip
@@ -117,8 +115,10 @@ void show_feature_weapons(int xres, int yres) {
 
       glEnd();
       glDisable(GL_BLEND);
+      
+      Gl.weapon_display = weapon;
 
-  if (weapon_display == 1) {
+    if (Gl.weapon_display == 1) {
         Gl.weapon_one[0] =20; // rand() % (xres - 20);
         Gl.weapon_one[1] =20; // rand() % (40);
         glColor3f(1.0, 0.0, 0.0);
@@ -130,7 +130,7 @@ void show_feature_weapons(int xres, int yres) {
 
              glEnd();
     }
-  else if (weapon_display == 2) {
+    else if (Gl.weapon_display == 2) {
         Gl.weapon_one[0] = 280; //  rand() % (xres - 20);
         Gl.weapon_one[1] = 20; // rand() % (40);
         glColor3f(0.0, 1.0, 0.0);
@@ -143,7 +143,7 @@ void show_feature_weapons(int xres, int yres) {
              glEnd();
     }
 
-    else { //(weapon_display == 3) {
+     else { //(weapon_display == 3) {
         Gl.weapon_one[0] = 550; //  rand() % (xres - 20);
         Gl.weapon_one[1] = 20; // rand() % (40);
         glColor3f(0.0, 0.0, 1.0);

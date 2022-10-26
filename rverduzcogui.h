@@ -8,5 +8,5 @@ extern void show_gameover_screen(int xres, int yres);
 
 extern unsigned int manage_feature_weapons_state(unsigned int w);
 
-extern void show_feature_weapons(int xres, int yres);
+extern void show_feature_weapons(int xres, int yres, int weapon);
 
