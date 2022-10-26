@@ -68,7 +68,7 @@ public:
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int credits,ship_movement, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-        int weapon1;
+        
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -83,7 +83,7 @@ public:
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
-		weapon1 = 0;
+		
 	}
 } gl;
 
@@ -1186,8 +1186,8 @@ void render()
 	}
 	
        	if (gl.feature_weapons) {
-            gl.weapon1 =1;
-            show_feature_weapons(gl.xres, gl.yres, gl.weapon1);
+            
+            show_feature_weapons(gl.xres, gl.yres);
             return;
         }
 

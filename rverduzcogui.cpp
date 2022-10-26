@@ -89,7 +89,9 @@ unsigned int manage_feature_weapons_state(unsigned int w ) {
 }
 
 
-void show_feature_weapons(int xres, int yres, int weapon1) {
+void show_feature_weapons(int xres, int yres) {
+     int weapon_display;
+     weapon_display = rand() % 3+1;
 
      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
      glEnable(GL_BLEND);
@@ -116,10 +118,9 @@ void show_feature_weapons(int xres, int yres, int weapon1) {
       glEnd();
       glDisable(GL_BLEND);
 
-
-    if (weapon1 != 0) {
-        Gl.weapon_one[0] = rand() % (xres - 20);
-        Gl.weapon_one[1] = rand() % (40);
+  if (weapon_display == 1) {
+        Gl.weapon_one[0] =20; // rand() % (xres - 20);
+        Gl.weapon_one[1] =20; // rand() % (40);
         glColor3f(1.0, 0.0, 0.0);
         glBegin(GL_QUADS);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
@@ -129,23 +130,32 @@ void show_feature_weapons(int xres, int yres, int weapon1) {
 
              glEnd();
     }
+  else if (weapon_display == 2) {
+        Gl.weapon_one[0] = 280; //  rand() % (xres - 20);
+        Gl.weapon_one[1] = 20; // rand() % (40);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_QUADS);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
 
-/*
-     if (weapon2 != 0) {
-         glBegins(GL_QUADS);
-             glVertex2i(p1[0] - 5, p1[1] -5);
-             glVertex2i(p1[0] - 5, p1[1] +5);
-             glVertex2i(p1[0] + 5, p1[1] +5);
-             glVertex2i(p1[0] + 5, p1[1] -5);
+             glEnd();
+    }
 
-     if (weapon3 != 0) {
-         glBegins(GL_QUADS);
-             glVertex2i(p1[0] - 5, p1[1] -5);
-             glVertex2i(p1[0] - 5, p1[1] +5);
-             glVertex2i(p1[0] + 5, p1[1] +5);
-             glVertex2i(p1[0] + 5, p1[1] -5);
+    else { //(weapon_display == 3) {
+        Gl.weapon_one[0] = 550; //  rand() % (xres - 20);
+        Gl.weapon_one[1] = 20; // rand() % (40);
+        glColor3f(0.0, 0.0, 1.0);
+        glBegin(GL_QUADS);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
+             glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
+             glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
 
-*/
+             glEnd();
+    }
+
 }
 
 
