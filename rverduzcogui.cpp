@@ -89,7 +89,7 @@ unsigned int manage_feature_weapons_state(unsigned int w ) {
 }
 
 
-void show_feature_weapons(int xres, int yres, int weapon) {
+void show_feature_weapons(int xres, int yres) {
      
      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
      glEnable(GL_BLEND);
@@ -116,7 +116,7 @@ void show_feature_weapons(int xres, int yres, int weapon) {
       glEnd();
       glDisable(GL_BLEND);
       
-      Gl.weapon_display = weapon;
+      Gl.weapon_display = rand() % 3 + 1;
 
     if (Gl.weapon_display == 1) {
         Gl.weapon_one[0] =20; // rand() % (xres - 20);
