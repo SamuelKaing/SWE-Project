@@ -996,6 +996,12 @@ void physics()
 				b->color[1] = 1.0f;
 				b->color[2] = 1.0f;
 				g.nbullets++;
+				//-------------------------------
+				//Testing for sound effect
+				char d =(char)(7);
+				printf("%c\n", d);
+				std::cout << "\a" << std:: flush;
+				//------------------------------
 			}
 		}
 	}
