@@ -189,7 +189,7 @@ public:
 	}
 	~Game() {extern unsigned int manage_feature_weapons_state(unsigned int w);
 
-extern void show_feature_weapons(int xres, int yres, int weapon1);
+//extern void show_feature_weapons(int xres, int yres, int weapon1);
 
 		delete [] barr;
 	}
@@ -336,7 +336,7 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
-extern void menu(int xres, int yres);
+//extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
 extern void start_boss_rush(int xres, int yres, Texture t_boss);
 //extern unsigned int manage_state(unsigned int s);
@@ -1057,7 +1057,7 @@ void render()
 		return;
 	}
 	if (gl.mouse_cursor){
-	    menu(gl.xres, gl.yres);
+	    //menu(gl.xres, gl.yres);
 	    return;
 	}
 	if (gl.p_screen){
