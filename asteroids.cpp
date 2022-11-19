@@ -67,8 +67,8 @@ public:
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits,ship_movement, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-        
+	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
+        int weapon1;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -83,7 +83,7 @@ public:
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
-		
+		weapon1 = 0;
 	}
 } gl;
 
@@ -190,13 +190,14 @@ public:
 	~Game() {extern unsigned int manage_feature_weapons_state(unsigned int w);
 
 extern void show_feature_weapons(int xres, int yres, int weapon1);
+
 		delete [] barr;
 	}
 } g;
 
 //Image Class
 
-Image image[1] = {"SInvaders.jpeg"};
+Image image[2] = {"SInvaders.jpeg", "images/boss.png"};
 
 //X Windows variables
 class X11_wrapper {
@@ -335,10 +336,9 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
-extern void show_sam();
 extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void ship_movement(int xres, int yres);
+extern void start_boss_rush(int xres, int yres, Texture t_boss);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -390,6 +390,7 @@ void init_opengl(void)
 	glDisable(GL_FOG);
 	glDisable(GL_CULL_FACE);
 	gl.t.img = &image[0];
+	gl.t_boss.img = &image[1];
 	//
 	//Clear the screen to black
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -503,25 +504,9 @@ void check_mouse(XEvent *e)
 			g.ship.pos[0] += 3;
 		}
 		if (ydiff > 0) {
-		   /* 
+		    
 			//apply thrust
 			//convert ship angle to radians
-			Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
-			//convert angle to a vector
-			Flt xdir = cos(rad);
-			Flt ydir = sin(rad);
-			g.ship.vel[0] += xdir * (float)ydiff * 0.01f;
-			g.ship.vel[1] += ydir * (float)ydiff * 0.01f;
-			Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
-												g.ship.vel[1]*g.ship.vel[1]);
-			if (speed > 4.0f) {
-				speed = 4.0f;
-				normalize2d(g.ship.vel);
-				g.ship.vel[0] *= speed;
-				g.ship.vel[1] *= speed;
-			}
-			g.mouseThrustOn = true;
-			clock_gettime(CLOCK_REALTIME, &g.mouseThrustTimer);
 			//Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
 			////convert angle to a vector
 			//Flt xdir = cos(rad);
@@ -538,7 +523,7 @@ void check_mouse(XEvent *e)
 			//}
 			//g.mouseThrustOn = true;
 			//clock_gettime(CLOCK_REALTIME, &g.mouseThrustTimer);
-		*/	
+			
 		    g.ship.pos[1] += 3;
 
 		}
@@ -609,7 +594,6 @@ int check_keys(XEvent *e)
 			gl.test_mode = manage_mode(gl.test_mode);
 			break;
 		case XK_g:
-			show_sam();
 			break;
 		case XK_h:
 			gl.juanfeature = manage_state(gl.juanfeature);
@@ -625,7 +609,7 @@ int check_keys(XEvent *e)
 		case XK_equal:
 			gl.gameover = manage_gameover_state(gl.gameover);
 			break;
-		case XK_w:
+		case XK_minus:
 			gl.feature_weapons = manage_feature_weapons_state
                                              (gl.feature_weapons);
                         /* if (gl.feature_weapons == 1) {
@@ -633,10 +617,6 @@ int check_keys(XEvent *e)
                               gl.p1[1] = rand() % (40);
                          }*/
 
-			break;
-		case XK_l:
-			gl.ship_movement ^= 1;	
-            		std::cout << "Feature mode: " << gl.ship_movement << std::endl;
 			break;
 	}
 	return 0;
@@ -838,6 +818,11 @@ void physics()
 		a = a->next;
 	}
 
+	//if collision with enemy hitbox damage ship
+	if (gl.boss_rush) {
+
+	}
+
 	if(gl.juanfeature)	{
 		a = g.ahead;
 		while(a){
@@ -856,81 +841,6 @@ void physics()
 
 	//---------------------------------------------------
 	//check keys pressed now
-	//
-	
-
-	//Updated ship movement
-	if (gl.ship_movement){
-	    ship_movement(gl.xres, gl.yres);
-	    if (gl.keys[XK_Left]) {
-	    		
-	    }
-	    if (gl.keys[XK_Right]) {
-	    	
-	    }
-	    if (gl.keys[XK_Up]) {
-		//apply thrust
-		//convert ship angle to radians
-		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
-		//convert angle to a vector
-		Flt xdir = cos(rad);
-		Flt ydir = sin(rad);
-		g.ship.vel[0] += xdir*0.02f;
-		g.ship.vel[1] += ydir*0.02f;
-		Flt speed = sqrt(g.ship.vel[0]*g.ship.vel[0]+
-			g.ship.vel[1]*g.ship.vel[1]);
-		if (speed > 5.0f) {
-		    speed = 5.0f;
-		    normalize2d(g.ship.vel);
-		    g.ship.vel[0] *= speed;
-		    g.ship.vel[1] *= speed;
-		}
-	    }
-	    if (gl.keys[XK_space]) {
-		//a little time between each bullet
-		struct timespec bt;
-		clock_gettime(CLOCK_REALTIME, &bt);
-		double ts = timeDiff(&g.bulletTimer, &bt);
-		if (ts > 0.1) {
-		    timeCopy(&g.bulletTimer, &bt);
-		    if (g.nbullets < MAX_BULLETS) {
-			//shoot a bullet...
-			//Bullet *b = new Bullet;
-			Bullet *b = &g.barr[g.nbullets];
-			timeCopy(&b->time, &bt);
-			b->pos[0] = g.ship.pos[0];
-			b->pos[1] = g.ship.pos[1];
-			b->vel[0] = g.ship.vel[0];
-			b->vel[1] = g.ship.vel[1];
-			//convert ship angle to radians
-			Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
-			//convert angle to a vector
-			Flt xdir = cos(rad);
-			Flt ydir = sin(rad);
-			b->pos[0] += xdir*20.0f;
-			b->pos[1] += ydir*20.0f;
-			b->vel[0] += xdir*6.0f + rnd()*0.1;
-			b->vel[1] += ydir*6.0f + rnd()*0.1;
-			b->color[0] = 1.0f;
-			b->color[1] = 1.0f;
-			b->color[2] = 1.0f;
-			g.nbullets++;
-		    }
-		}
-	    }
-	    if (g.mouseThrustOn) {
-		//should thrust be turned off
-		struct timespec mtt;
-		clock_gettime(CLOCK_REALTIME, &mtt);
-		double tdif = timeDiff(&mtt, &g.mouseThrustTimer);
-		//std::cout << "tdif: " << tdif << std::endl;
-		if (tdif < -0.3)
-		    g.mouseThrustOn = false;
-	    }
-	    return;
-	}
-
-	//Original Ship Movement
 	if (gl.keys[XK_Left]) {
 		//g.ship.angle += 4.0;
 		//if (g.ship.angle >= 360.0f)
@@ -946,7 +856,7 @@ void physics()
 	if (gl.keys[XK_Up]) {
 		//apply thrust
 		//convert ship angle to radians
-		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+		//Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
 		//convert angle to a vector
 		//Flt xdir = cos(rad);
 		//Flt ydir = sin(rad);
@@ -996,12 +906,6 @@ void physics()
 				b->color[1] = 1.0f;
 				b->color[2] = 1.0f;
 				g.nbullets++;
-				//-------------------------------
-				//Testing for sound effect
-				char d =(char)(7);
-				printf("%c\n", d);
-				std::cout << "\a" << std:: flush;
-				//------------------------------
 			}
 		}
 	}
@@ -1033,7 +937,7 @@ void start_screen()
         glVertex2f( xcent+w, ycent-w);
     glEnd();
 
-    ggprint16(&r3, 50, 0x000000 , "SPACE INVADERS");
+    ggprint8b(&r3, 50, 0x000000 , "Space Invaders");
     ggprint8b(&r3, 30, 0x000000 , "Press 'S' to start");
 
 }
@@ -1053,40 +957,7 @@ void render()
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
-	ggprint8b(&r, 16, 0x00ffff00, "F1 for help");
-
 	//-------------------------------------------------------------------------
-	//-------------------------------------------------------------------------
-	//Draw the asteroids
-	{
-		Asteroid *a = g.ahead;
-		while (a) {
-			//Log("draw asteroid...\n");
-			glColor3fv(a->color);
-			glPushMatrix();
-			glTranslatef(a->pos[0], a->pos[1], a->pos[2]);
-			glRotatef(a->angle, 0.0f, 0.0f, 1.0f);
-			glBegin(GL_LINE_LOOP);
-			//Log("%i verts\n",a->nverts);
-			for (int j=0; j<a->nverts; j++) {
-				glVertex2f(a->vert[j][0], a->vert[j][1]);
-			}
-			glEnd();
-			//glBegin(GL_LINES);
-			//	glVertex2f(0,   0);
-			//	glVertex2f(a->radius, 0);
-			//glEnd();
-			glPopMatrix();
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glBegin(GL_POINTS);
-			glVertex2f(a->pos[0], a->pos[1]);
-			glEnd();
-			a = a->next;
-		}
-	}
-	if (gl.ship_movement){
-	    ship_movement(gl.xres, gl.yres);
-	}
 	//Draw the ship
 	glColor3fv(g.ship.color);
 	glPushMatrix();
@@ -1133,6 +1004,34 @@ void render()
 	    }
 	}
 	//-------------------------------------------------------------------------
+	//Draw the asteroids
+	{
+		Asteroid *a = g.ahead;
+		while (a) {
+			//Log("draw asteroid...\n");
+			glColor3fv(a->color);
+			glPushMatrix();
+			glTranslatef(a->pos[0], a->pos[1], a->pos[2]);
+			glRotatef(a->angle, 0.0f, 0.0f, 1.0f);
+			glBegin(GL_LINE_LOOP);
+			//Log("%i verts\n",a->nverts);
+			for (int j=0; j<a->nverts; j++) {
+				glVertex2f(a->vert[j][0], a->vert[j][1]);
+			}
+			glEnd();
+			//glBegin(GL_LINES);
+			//	glVertex2f(0,   0);
+			//	glVertex2f(a->radius, 0);
+			//glEnd();
+			glPopMatrix();
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glBegin(GL_POINTS);
+			glVertex2f(a->pos[0], a->pos[1]);
+			glEnd();
+			a = a->next;
+		}
+	}
+	//-------------------------------------------------------------------------
 	//Draw the bullets
 	for (int i=0; i<g.nbullets; i++) {
 		Bullet *b = &g.barr[i];
@@ -1158,7 +1057,7 @@ void render()
 		return;
 	}
 	if (gl.mouse_cursor){
-	    //menu(gl.xres, gl.yres);
+	    menu(gl.xres, gl.yres);
 	    return;
 	}
 	if (gl.p_screen){
@@ -1185,7 +1084,7 @@ void render()
 	}
 
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres, gl.yres);
+		start_boss_rush(gl.xres, gl.yres, gl.t_boss);
 		return;
 	}
 
@@ -1194,11 +1093,12 @@ void render()
 	}
 	
        	if (gl.feature_weapons) {
-            
-            show_feature_weapons(gl.xres, gl.yres);
+            gl.weapon1 =1;
+            show_feature_weapons(gl.xres, gl.yres, gl.weapon1);
             return;
         }
 
 }
+
 
 
