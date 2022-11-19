@@ -75,9 +75,12 @@ void show_controls(int xres, int yres)
     ggprint10(&r2, 40, 0x2e281, "Shoot -- Spacebar");
     ggprint10(&r2, 40, 0x2e281, "Pause -- p");
     ggprint10(&r2, 40, 0x2e281, "Credits -- c");
+    ggprint10(&r2, 40, 0x2e281, "Ship Movement Mode -- l");
     ggprint10(&r2, 40, 0x2e281, "Collision Mode -- h");
     ggprint10(&r2, 40, 0x2e281, "Boss Mode -- b");
     ggprint10(&r2, 40, 0x2e281, "Jacob's Feature mode -- x");
+    ggprint10(&r2, 40, 0x2e281, "Weapon Feature mode -- w");
+
 }
 
 void start_boss_rush(int xres, int yres) 
