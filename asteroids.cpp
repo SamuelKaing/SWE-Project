@@ -68,7 +68,7 @@ public:
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-        int weapon1;
+        int weapon;
 	Global() {
 		xres = 640;
 		yres = 480;
@@ -83,7 +83,7 @@ public:
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
-		weapon1 = 0;
+		weapon = 0;
 	}
 } gl;
 
@@ -609,13 +609,12 @@ int check_keys(XEvent *e)
 		case XK_equal:
 			gl.gameover = manage_gameover_state(gl.gameover);
 			break;
-		case XK_minus:
+		case XK_w:
 			gl.feature_weapons = manage_feature_weapons_state
                                              (gl.feature_weapons);
-                        /* if (gl.feature_weapons == 1) {
-                              gl.p1[0] = rand() % (gl.xres - 20);
-                              gl.p1[1] = rand() % (40);
-                         }*/
+                        if (gl.feature_weapons == 1) {
+                              gl.weapon = rand()% 3 + 1;
+                         }
 
 			break;
 	}
@@ -1093,8 +1092,8 @@ void render()
 	}
 	
        	if (gl.feature_weapons) {
-            gl.weapon1 =1;
-            //show_feature_weapons(gl.xres, gl.yres, gl.weapon1);
+            
+            show_feature_weapons(gl.xres, gl.yres, gl.weapon);
             return;
         }
 
