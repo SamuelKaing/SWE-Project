@@ -88,7 +88,7 @@ void tester_mode(int xres, int yres)
 	//Drawing the enemy ship
 	glColor3fv(m.eship.color);
 	glPushMatrix();
-	glTrabnslatef(m.eship.pos[0], m.eship.pos[1], m.eship.pos[2]);
+	glTranslatef(m.eship.pos[0], m.eship.pos[1], m.eship.pos[2]);
 	glRotatef(m.eship.angle, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 	glVertex2f(-12.0f, -10.0f);
