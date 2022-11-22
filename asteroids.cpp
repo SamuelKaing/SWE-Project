@@ -67,9 +67,10 @@ public:
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
+	unsigned int level, credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
         int weapon;
 	Global() {
+	    	level = 1;
 		xres = 640;
 		yres = 480;
 		memset(keys, 0, 65536);
@@ -139,6 +140,7 @@ public:
 
 class Game {
 public:
+    	int level[3] = {2, 5, 10};
 	Ship ship;
 	Asteroid *ahead;
 	Bullet *barr;
@@ -149,13 +151,14 @@ public:
 	bool mouseThrustOn;
 public:
 	Game() {
+	    	//level[] = {2, 5, 10};
 		ahead = NULL;
 		barr = new Bullet[MAX_BULLETS];
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
 		//build 10 asteroids...
-		for (int j=0; j<10; j++) {
+		for (int j=0; j<2; j++) {
 			Asteroid *a = new Asteroid;
 			a->nverts = 8;
 			a->radius = rnd()*80.0 + 40.0;
@@ -186,6 +189,46 @@ public:
 			++nasteroids;
 		}
 		clock_gettime(CLOCK_REALTIME, &bulletTimer);
+	}
+
+	void reset(int newLevel){
+		ahead = NULL;
+		barr = new Bullet[MAX_BULLETS];
+		nasteroids = 0;
+		nbullets = 0;
+		mouseThrustOn = false;
+		//build Level[l] amount of asteroids...
+		for (int j=0; j<level[newLevel-1]; j++) {
+			Asteroid *a = new Asteroid;
+			a->nverts = 8;
+			a->radius = rnd()*80.0 + 40.0;
+			Flt r2 = a->radius / 2.0;
+			Flt angle = 0.0f;
+			Flt inc = (PI * 2.0) / (Flt)a->nverts;
+			for (int i=0; i<a->nverts; i++) {
+				a->vert[i][0] = sin(angle) * (r2 + rnd() * a->radius);
+				a->vert[i][1] = cos(angle) * (r2 + rnd() * a->radius);
+				angle += inc;
+			}
+			a->pos[0] = (Flt)(rand() % gl.xres);
+			a->pos[1] = (Flt)(rand() % gl.yres);
+			a->pos[2] = 0.0f;
+			a->angle = 0.0;
+			a->rotate = rnd() * 4.0 - 2.0;
+			a->color[0] = 0.8;
+			a->color[1] = 0.8;
+			a->color[2] = 0.7;
+			a->vel[0] = (Flt)(rnd()*2.0-1.0); //(Flt)(rnd()*2.0-1.0
+			a->vel[1] = (Flt)(rnd()*2.0-1.0);
+			//std::cout << "asteroid" << std::endl;
+			//add to front of linked list
+			a->next = ahead;
+			if (ahead != NULL)
+				ahead->prev = a;
+			ahead = a;
+			++nasteroids;
+	
+		}
 	}
 	~Game() {extern unsigned int manage_feature_weapons_state(unsigned int w);
 
@@ -336,9 +379,11 @@ void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
+void deleteAsteroid(Game *g, Asteroid *node);
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void start_boss_rush(int xres, int yres);
+extern void start_boss_rush(int xres, int yres, Texture t_boss);
+extern void replenishAsteroids(Game *g, int nasteroids, int level);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -577,7 +622,8 @@ int check_keys(XEvent *e)
 
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
-			make_boss(gl.xres, gl.yres, gl.t_boss);
+			//make boss
+			make_boss(gl.xres, gl.yres);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -615,6 +661,13 @@ int check_keys(XEvent *e)
                               gl.weapon = rand()% 3 + 1;
                          }
 
+			break;
+		case XK_l:
+			Asteroid *a = g.ahead;
+			for (int i = 0; i<g.nasteroids; i++){
+				deleteAsteroid(&g, a);
+			}
+			g.nasteroids = 0;
 			break;
 	}
 	return 0;
@@ -802,10 +855,17 @@ void physics()
 					deleteAsteroid(&g, a);
 					a = savea;
 					g.nasteroids--;
+					if (g.nasteroids == 0){
+					    	gl.level++;
+						//Game g = new Game(gl.level);
+					    	//replenishAsteroids(*g, g.nasteroids, gl.level);
+					}
 				}
 				//delete the bullet...
 				memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
 				g.nbullets--;
+				if (g.nasteroids == 0)
+					g.reset(gl.level);
 				if (a == NULL)
 					break;
 			}
@@ -953,6 +1013,7 @@ void render()
 	r.left = 10;
 	r.center = 0;
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
+	ggprint8b(&r, 16, 0x00ff0000, "Level: %i", gl.level);
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	//-------------------------------------------------------------------------
@@ -1082,7 +1143,7 @@ void render()
 	}
 
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres, gl.yres);
+		start_boss_rush(gl.xres, gl.yres, gl.t_boss);
 		return;
 	}
 
