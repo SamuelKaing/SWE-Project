@@ -383,7 +383,7 @@ void deleteAsteroid(Game *g, Asteroid *node);
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
 extern void start_boss_rush(int xres, int yres, Texture t_boss);
-extern void replenishAsteroids(Game *g, int nasteroids, int level);
+
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -524,8 +524,10 @@ void check_mouse(XEvent *e)
 		if(gl.p_screen)
 		    return;
 		if (gl.help)
-			return;
-		
+		    return;
+		if(g.nasteroids == 0)
+		    return;
+
 		//
 		int xdiff = savex - e->xbutton.x;
 		int ydiff = savey - e->xbutton.y;
@@ -736,6 +738,8 @@ void physics()
 	    return;
         if (gl.gameover)
 	    return;
+	if(g.nasteroids == 0)
+	    return;
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
@@ -880,8 +884,8 @@ void physics()
 	if (gl.boss_rush) {
 
 	}
-
-	if(gl.juanfeature)	{
+	//COLLISION MODE
+	if(gl.juanfeature){
 		a = g.ahead;
 		while(a){
 			Flt test1,test2;
@@ -891,6 +895,7 @@ void physics()
 			if (dist < (a->radius*a->radius)){
 				gl.gameover = 1;
 			}
+			//gl.gameover = collision_mode(a->radius, g.ship.pos[1],g.ship.pos[0], a->pos[1], a->pos[0]);
 			if (a == NULL)
 				break;
 			a = a ->next;
@@ -1156,6 +1161,10 @@ void render()
             show_feature_weapons(gl.xres, gl.yres, gl.weapon);
             return;
         }
+	//if(g.nasteroids == 0){
+	//    win_screen(gl.xres, gl.yres);
+	//}
+
 
 }
 
