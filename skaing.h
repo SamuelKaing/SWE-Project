@@ -3,16 +3,16 @@
 #ifndef _BOSS_H
 #define _BOSS_H
 
-class Boss 
+class Enemy 
 {
     public:
-        Texture boss_tex;
+        Texture enemy_tex;
         float w;
         float pos[2];
         int movement;
         int health;
-        Boss() {}
-        Boss(float wid, float xpos, float ypos, int move);
+        Enemy() {}
+        Enemy(float wid, float xpos, float ypos, int move);
 };
 
 #endif

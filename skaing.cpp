@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 //Fix mouse movement controls
-Boss::Boss(float wid, float xpos, float ypos, int move) {
+Enemy::Enemy(float wid, float xpos, float ypos, int move) {
     w = wid;
     pos[0] = xpos;
     pos[1] = ypos;
@@ -20,7 +20,7 @@ Boss::Boss(float wid, float xpos, float ypos, int move) {
 
 void move_boss(int xres);
 
-Boss boss;
+Enemy boss;
 
 unsigned int manage_help_state(unsigned int s)
 {
@@ -126,16 +126,16 @@ void start_boss_rush(int xres, int yres)
     glEnd();
     
     // Bind image to hitbox position
-    glGenTextures(1, &boss.boss_tex.backText);
-	int width = boss.boss_tex.img->w;
-	int height = boss.boss_tex.img->h;
-	glBindTexture(GL_TEXTURE_2D, boss.boss_tex.backText);
+    glGenTextures(1, &boss.enemy_tex.backText);
+	int width = boss.enemy_tex.img->w;
+	int height = boss.enemy_tex.img->h;
+	glBindTexture(GL_TEXTURE_2D, boss.enemy_tex.backText);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     //Correctly aligns texture
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
-						GL_RGB, GL_UNSIGNED_BYTE, boss.boss_tex.img->data);
+						GL_RGB, GL_UNSIGNED_BYTE, boss.enemy_tex.img->data);
 
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_QUADS);
@@ -151,7 +151,7 @@ void start_boss_rush(int xres, int yres)
 
 void make_boss(int xres, int yres, Texture boss_tex)
 {
-    boss.boss_tex = boss_tex;
+    boss.enemy_tex = boss_tex;
     boss.w = 40;
     boss.pos[0] = xres / 2;
     boss.pos[1] = yres - (yres / 4);
