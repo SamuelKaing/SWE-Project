@@ -577,8 +577,7 @@ int check_keys(XEvent *e)
 
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
-			//make boss
-			make_boss(gl.xres, gl.yres);
+			make_boss(gl.xres, gl.yres, gl.t_boss);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -1083,7 +1082,7 @@ void render()
 	}
 
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres, gl.yres, gl.t_boss);
+		start_boss_rush(gl.xres, gl.yres);
 		return;
 	}
 
