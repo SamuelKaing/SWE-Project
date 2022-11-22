@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <GL/glx.h>
 #include "fonts.h"
+#include "jflanders.h"
+#include "skaing.h"
 
 typedef float Flt;
 typedef float Vec[3];
@@ -57,12 +59,14 @@ void tester_mode(int xres, int yres)
 {
     int xcent = xres;
     int ycent = yres;
+    //Rect r3;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glColor3f(1.0, 1.0, 0.0);
     glColor4f(1.0, 1.0, 0.0, 0.5);
     int w = 20;
+    glPushMatrix();
      glBegin(GL_TRIANGLE_STRIP);
         glVertex2i(0, 0);
         glVertex2i(0+w, w);
@@ -84,11 +88,11 @@ void tester_mode(int xres, int yres)
 	//Drawing the enemy ship
 	glColor3fv(m.eship.color);
 	glPushMatrix();
-	glTranslatef(m.eship.pos[0], m.eship.pos[1], m.eship.pos[2]);
+	glTrabnslatef(m.eship.pos[0], m.eship.pos[1], m.eship.pos[2]);
 	glRotatef(m.eship.angle, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 	glVertex2f(-12.0f, -10.0f);
-	glVertex2f(  0.0f,  20.0f);
+	glVertex2f(  0.0f,  10.0f);
 	glVertex2f(  0.0f,  -6.0f);
 	glVertex2f(  0.0f,  -6.0f);
 	glVertex2f(  0.0f,  20.0f);
@@ -102,5 +106,6 @@ void tester_mode(int xres, int yres)
 
 
 }
+
 
 
