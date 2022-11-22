@@ -338,7 +338,7 @@ void physics();
 void render();
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void start_boss_rush(int xres, int yres, Texture t_boss);
+extern void start_boss_rush(int xres, int yres);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
