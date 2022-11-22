@@ -140,7 +140,7 @@ public:
 
 class Game {
 public:
-    	int level[3] = {2, 5, 10};
+    int level[3] = {2, 5, 10};
 	Ship ship;
 	Asteroid *ahead;
 	Bullet *barr;
@@ -152,13 +152,13 @@ public:
 public:
 	Game() {
 	    	//level[] = {2, 5, 10};
-		ahead = NULL;
+			ahead = NULL;
 		barr = new Bullet[MAX_BULLETS];
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
 		//build 10 asteroids...
-		for (int j=0; j<2; j++) {
+		for (int j=0; j<level[gl.level-1]; j++) {
 			Asteroid *a = new Asteroid;
 			a->nverts = 8;
 			a->radius = rnd()*80.0 + 40.0;
@@ -382,8 +382,8 @@ void render();
 void deleteAsteroid(Game *g, Asteroid *node);
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void start_boss_rush(int xres, int yres, Texture t_boss);
-
+extern void start_boss_rush(int xres, int yres);
+extern void make_boss(int xres, int yres, Texture boss_tex);
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
 // M A I N
@@ -625,7 +625,7 @@ int check_keys(XEvent *e)
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
 			//make boss
-			make_boss(gl.xres, gl.yres);
+			make_boss(gl.xres, gl.yres, gl.t_boss);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -666,7 +666,7 @@ int check_keys(XEvent *e)
 			break;
 		case XK_l:
 			Asteroid *a = g.ahead;
-			for (int i = 0; i<g.nasteroids; i++){
+			for (int i = 0; i<g.nasteroids-1; i++){
 				deleteAsteroid(&g, a);
 			}
 			g.nasteroids = 0;
@@ -1148,7 +1148,7 @@ void render()
 	}
 
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres, gl.yres, gl.t_boss);
+		start_boss_rush(gl.xres, gl.yres);
 		return;
 	}
 
