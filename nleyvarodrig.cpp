@@ -1,5 +1,6 @@
 //Nathan Rodriguez
-//
+
+#include <cmath>
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
@@ -127,4 +128,37 @@ void ship_movement(int xres, int yres){
 		glVertex2f(xres, 0);
     	glEnd();
 }
-
+/*
+void replenishAsteroids(Game *g, int nasteroids, int level){	
+    for (int j=0; j<ceil(level * 1.25) + 10; j++) {
+	Asteroid *a = new Asteroid;
+	a->nverts = 8;
+	a->radius = rnd()*80.0 + 40.0;
+	Flt r2 = a->radius / 2.0;
+	Flt angle = 0.0f;
+	Flt inc = (PI * 2.0) / (Flt)a->nverts;
+	for (int i=0; i<a->nverts; i++) {
+	    a->vert[i][0] = sin(angle) * (r2 + rnd() * a->radius);
+	    a->vert[i][1] = cos(angle) * (r2 + rnd() * a->radius);
+	    angle += inc;
+	}
+	a->pos[0] = (Flt)(rand() % gl.xres);
+	a->pos[1] = (Flt)(rand() % gl.yres);
+	a->pos[2] = 0.0f;
+	a->angle = 0.0;
+	a->rotate = rnd() * 4.0 - 2.0;
+	a->color[0] = 0.8;
+	a->color[1] = 0.8;
+	a->color[2] = 0.7;
+	a->vel[0] = (Flt)(rnd()*2.0-1.0); //(Flt)(rnd()*2.0-1.0
+	a->vel[1] = (Flt)(rnd()*2.0-1.0);
+	//std::cout << "asteroid" << std::endl;
+	//add to front of linked list
+	a->next = ahead;
+	if (ahead != NULL)
+	    ahead->prev = a;
+	ahead = a;
+	++nasteroids;
+    }
+    clock_gettime(CLOCK_REALTIME, &bulletTimer);
+}*/
