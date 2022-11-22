@@ -6,26 +6,21 @@
 #include "fonts.h"
 #include "skaing.h"
 #include "image.h"
-
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-//Fix mouse movement controls
-//Import image to screen
 
-class Boss {
-    public:
-        Texture boss_tex;
-        float w;
-        float pos[2];
-        int movement;
-        Boss() {}
-        Boss(float wid, float pos_x, float pos_y) {
-            w = wid;
-            pos[0] = pos_x;
-            pos[1] = pos_y;
-        }
-} boss;
+//Fix mouse movement controls
+Boss::Boss(float wid, float xpos, float ypos, int move) {
+    w = wid;
+    pos[0] = xpos;
+    pos[1] = ypos;
+    movement = move;
+}
+
+void move_boss(int xres);
+
+Boss boss;
 
 unsigned int manage_help_state(unsigned int s)
 {
@@ -80,7 +75,7 @@ void show_controls(int xres, int yres)
     ggprint10(&r2, 40, 0x2e281, "Jacob's Feature mode -- x");
 }
 
-void start_boss_rush(int xres, int yres, Texture boss_tex) 
+void start_boss_rush(int xres, int yres) 
 {
     int w = 30;
     //int xcent = xres/2;
@@ -129,19 +124,18 @@ void start_boss_rush(int xres, int yres, Texture boss_tex)
         glVertex2f( boss.w, boss.w);
         glVertex2f( boss.w, -boss.w);
     glEnd();
-
     
-    // Make image; Bind it to hitbox position
-    glGenTextures(1, &boss_tex.backText);
-	int width = boss_tex.img->w;
-	int height = boss_tex.img->h;
-	glBindTexture(GL_TEXTURE_2D, boss_tex.backText);
+    // Bind image to hitbox position
+    glGenTextures(1, &boss.boss_tex.backText);
+	int width = boss.boss_tex.img->w;
+	int height = boss.boss_tex.img->h;
+	glBindTexture(GL_TEXTURE_2D, boss.boss_tex.backText);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     //Correctly aligns texture
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
-						GL_RGB, GL_UNSIGNED_BYTE, boss_tex.img->data);
+						GL_RGB, GL_UNSIGNED_BYTE, boss.boss_tex.img->data);
 
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_QUADS);
@@ -152,8 +146,19 @@ void start_boss_rush(int xres, int yres, Texture boss_tex)
 	glEnd();
     glPopMatrix();
 
+    move_boss(xres);
+}
 
-    //boss movement
+void make_boss(int xres, int yres, Texture boss_tex)
+{
+    boss.boss_tex = boss_tex;
+    boss.w = 40;
+    boss.pos[0] = xres / 2;
+    boss.pos[1] = yres - (yres / 4);
+    boss.movement = 0;
+}
+
+void move_boss(int xres) {
     if (boss.pos[0] <= boss.w)
         boss.movement = 1;
     if (boss.pos[0] >= xres - boss.w)
@@ -163,12 +168,4 @@ void start_boss_rush(int xres, int yres, Texture boss_tex)
         boss.pos[0] -= 3;
     if (boss.movement == 1)
         boss.pos[0] += 3;
-}
-
-void make_boss(int xres, int yres)
-{
-    boss.w = 40;
-    boss.pos[0] = xres / 2;
-    boss.pos[1] = yres - (yres / 4);
-    boss.movement = 0;
 }
