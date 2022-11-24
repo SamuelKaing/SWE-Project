@@ -10,6 +10,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//-----------------------------------------------------------------------------
+// Timer setup
+extern struct timespec timeStart, timeCurrent;
+extern struct timespec timePause;
+extern double physicsCountdown;
+extern double timeSpan;
+extern double timeDiff(struct timespec *start, struct timespec *end);
+extern void timeCopy(struct timespec *dest, struct timespec *source);
+//-----------------------------------------------------------------------------
+
 //Fix mouse movement controls
 Enemy::Enemy(float wid, float xpos, float ypos, int move) {
     w = wid;
@@ -166,4 +176,19 @@ void move_boss(int xres) {
         boss.pos[0] -= 3;
     if (boss.movement == 1)
         boss.pos[0] += 3;
+}
+
+void behavior(struct timespec &boss_bulletTimer) {
+    
+    //Every couple seconds, shoot 3 bullet burst at player
+    struct timespec bt;
+    clock_gettime(CLOCK_REALTIME, &bt);
+    double ts = timeDiff(&boss_bulletTimer, &bt);
+    std::cout << ts << std::endl;
+
+    //a little time between each bullet
+    if (ts > 1.0) {
+        clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
+        //shoot bullet
+    }
 }

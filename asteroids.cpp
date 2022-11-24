@@ -61,6 +61,8 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
 
 
+struct timespec boss_bulletTimer;
+
 class Global {
 public:
 	Texture t, t_boss;
@@ -626,6 +628,8 @@ int check_keys(XEvent *e)
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
 			//make boss
 			make_boss(gl.xres, gl.yres, gl.t_boss);
+			//start timer for behavior
+			clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -1149,6 +1153,8 @@ void render()
 
 	if (gl.boss_rush) {
 		start_boss_rush(gl.xres);
+		//call behavior; pass in timer
+		behavior(boss_bulletTimer);
 		return;
 	}
 
