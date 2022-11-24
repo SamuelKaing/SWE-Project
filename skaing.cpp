@@ -75,11 +75,9 @@ void show_controls(int xres, int yres)
     ggprint10(&r2, 40, 0x2e281, "Jacob's Feature mode -- x");
 }
 
-void start_boss_rush(int xres, int yres) 
+void start_boss_rush(int xres) 
 {
     int w = 30;
-    //int xcent = xres/2;
-    //int ycent = yres/2;
     Rect r2;
     r2.left = (xres / 2) - (w / 4);
     r2.bot = 0 + (w / 5);

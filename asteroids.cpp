@@ -382,7 +382,7 @@ void render();
 void deleteAsteroid(Game *g, Asteroid *node);
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void start_boss_rush(int xres, int yres, Texture t_boss);
+extern void start_boss_rush(int xres);
 
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
@@ -625,7 +625,7 @@ int check_keys(XEvent *e)
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
 			//make boss
-			make_boss(gl.xres);
+			make_boss(gl.xres, gl.yres, gl.t_boss);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -1148,7 +1148,7 @@ void render()
 	}
 
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres, gl.yres, gl.t_boss);
+		start_boss_rush(gl.xres);
 		return;
 	}
 
