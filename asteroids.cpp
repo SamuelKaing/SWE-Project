@@ -65,7 +65,7 @@ struct timespec boss_bulletTimer;
 
 class Global {
 public:
-	Texture t, t_boss;
+	Texture t, t_boss, t_enemy;
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
@@ -242,7 +242,7 @@ public:
 
 //Image Class
 
-Image image[2] = {"SInvaders.jpeg", "images/boss.png"};
+Image image[3] = {"SInvaders.jpeg", "images/boss.png", "images/s_enemy.jpeg"};
 
 //X Windows variables
 class X11_wrapper {
@@ -438,6 +438,7 @@ void init_opengl(void)
 	glDisable(GL_CULL_FACE);
 	gl.t.img = &image[0];
 	gl.t_boss.img = &image[1];
+    gl.t_enemy.img = &image[3];
 	//
 	//Clear the screen to black
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -643,6 +644,7 @@ int check_keys(XEvent *e)
 		case XK_x:
 			//Toggle Jacob's feature mode
 			gl.test_mode = manage_mode(gl.test_mode);
+            make_enemy(gl.xres, gl.yres, gl.t_enemy);
 			break;
 		case XK_g:
 			break;
