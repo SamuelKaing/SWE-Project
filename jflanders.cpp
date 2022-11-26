@@ -137,10 +137,10 @@ void tester_mode(int xres, int yres)
     glColor4f(1.0, 0.0, 0.0, 0.0);
     glTranslatef(se.pos[0], se.pos[1], 0.0f);
     glBegin(GL_QUADS);
-        glVertex2f( -se.w, -se.w);
-        glVertex2f( -se.w, se.w);
-        glVertex2f( se.w, se.w);
-        glVertex2f( se.w, -se.w);
+        glVertex2f( -se.width, -se.width);
+        glVertex2f( -se.width, se.width);
+        glVertex2f( se.width, se.width);
+        glVertex2f( se.width, -se.width);
     glEnd();
 
     // Bind image to hitbox position
@@ -157,10 +157,10 @@ void tester_mode(int xres, int yres)
 
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_QUADS);
-        glTexCoord2f(0, 1); glVertex2i(-se.w, -se.w);
-		glTexCoord2f(0, 0); glVertex2i(-se.w, se.w);
-		glTexCoord2f(1, 0); glVertex2i(se.w, se.w);
-		glTexCoord2f(1, 1); glVertex2i(se.w, -se.w);
+        glTexCoord2f(0, 1); glVertex2i(-se.width, -se.width);
+		glTexCoord2f(0, 0); glVertex2i(-se.width, se.width);
+		glTexCoord2f(1, 0); glVertex2i(se.width, se.width);
+		glTexCoord2f(1, 1); glVertex2i(se.width, -se.width);
 	glEnd();
     glPopMatrix();
     
@@ -169,11 +169,10 @@ void tester_mode(int xres, int yres)
 void make_enemy(int xres, int yres, Texture enemy_tex)
 {
     se.enemy_tex = enemy_tex;
-    se.w = 20;
+    se.width = 20;
     se.pos[0] = xres / 2;
     se.pos[1] = yres - (yres / 4);
     se.movement = 0;
 }
-
 
 
