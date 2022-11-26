@@ -230,7 +230,7 @@ public:
 } g;
 
 //Image Class
-Image image[2] = {"SInvaders.jpeg", "images/boss.png", "images/s_enemy.jpeg"};
+Image image[3] = {"SInvaders.jpeg", "images/boss.png", "images/s_enemy.jpeg"};
 
 //X Windows variables
 class X11_wrapper {
