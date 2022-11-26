@@ -88,9 +88,8 @@ void tester_mode(int xres, int yres)
         glEnd();
         glPopMatrix();
         //glDisable(GL_BLEND);
-
-	//Drawing the enemy ship
     /*
+	//Drawing the enemy ship
 	glColor3fv(m.eship.color);
 	glPushMatrix();
 	glTranslatef(m.eship.pos[0], m.eship.pos[1], m.eship.pos[2]);
