@@ -232,7 +232,6 @@ void boss_bulletPhysics() {
 }
 
 void boss_drawBullets() {
-    glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
     for (int i=0; i < nbullets; i++) {
 		Bullet *b = &barr[i];
