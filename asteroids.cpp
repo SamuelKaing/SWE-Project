@@ -28,7 +28,7 @@
 //defined types
 typedef float Flt;
 typedef float Vec[3];
-typedef Flt	Matrix[4][4];
+typedef Flt Matrix[4][4];
 
 //macros
 #define rnd() (((Flt)rand())/(Flt)RAND_MAX)
@@ -78,10 +78,10 @@ public:
 		mouse_cursor = 0;	//Initial mouse state is off
 		credits = 0; 		//Credits page initially off
 		p_screen = 0;     	//Pause screen initially off
-		help = 0;           //Help screen initially off
+		help = 0;           	//Help screen initially off
 		gameover = 0;     	//Test for Gameover
-		start = 1;	   		//Game start screen on
-    	boss_rush = 0;		//Boss Rush mode initially off
+		start = 1;	   	//Game start screen on
+		boss_rush = 0;		//Boss Rush mode initially off
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
