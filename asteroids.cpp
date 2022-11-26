@@ -28,7 +28,7 @@
 //defined types
 typedef float Flt;
 typedef float Vec[3];
-typedef Flt	Matrix[4][4];
+typedef Flt Matrix[4][4];
 
 //macros
 #define rnd() (((Flt)rand())/(Flt)RAND_MAX)
@@ -61,8 +61,6 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
 
 
-struct timespec boss_bulletTimer;
-
 class Global {
 public:
 	Texture t, t_boss, t_enemy;
@@ -70,19 +68,20 @@ public:
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int level, credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-        int weapon;
+	int weapon;
+	struct timespec boss_bulletTimer;
 	Global() {
-	    	level = 1;
+		level = 1;
 		xres = 640;
 		yres = 480;
 		memset(keys, 0, 65536);
 		mouse_cursor = 0;	//Initial mouse state is off
 		credits = 0; 		//Credits page initially off
 		p_screen = 0;     	//Pause screen initially off
-		help = 0;           //Help screen initially off
-		gameover = 0;        // Test for Gameover
-		start = 1;	   //Game start screen on
-    	boss_rush = 0;		//Boss Rush mode initially off
+		help = 0;           	//Help screen initially off
+		gameover = 0;     	//Test for Gameover
+		start = 1;	   	//Game start screen on
+		boss_rush = 0;		//Boss Rush mode initially off
 		test_mode = 0;
 		juanfeature = 0;
 		feature_weapons = 0;
@@ -111,16 +110,6 @@ public:
 	}
 };
 
-class Bullet {
-public:
-	Vec pos;
-	Vec vel;
-	float color[3];
-	struct timespec time;
-public:
-	Bullet() { }
-};
-
 class Asteroid {
 public:
 	Vec pos;
@@ -142,7 +131,7 @@ public:
 
 class Game {
 public:
-    	int level[3] = {2, 5, 10};
+	int level[3] = {2, 5, 10};
 	Ship ship;
 	Asteroid *ahead;
 	Bullet *barr;
@@ -153,7 +142,7 @@ public:
 	bool mouseThrustOn;
 public:
 	Game() {
-	    	//level[] = {2, 5, 10};
+		//level[] = {2, 5, 10};
 		ahead = NULL;
 		barr = new Bullet[MAX_BULLETS];
 		nasteroids = 0;
@@ -241,7 +230,6 @@ public:
 } g;
 
 //Image Class
-
 Image image[3] = {"SInvaders.jpeg", "images/boss.png", "images/s_enemy.jpeg"};
 
 //X Windows variables
@@ -384,7 +372,6 @@ void render();
 void deleteAsteroid(Game *g, Asteroid *node);
 //extern void menu(int xres, int yres);
 extern void show_credits(Texture t, int xres, int yres);
-extern void start_boss_rush(int xres);
 
 //extern unsigned int manage_state(unsigned int s);
 //==========================================================================
@@ -438,7 +425,7 @@ void init_opengl(void)
 	glDisable(GL_CULL_FACE);
 	gl.t.img = &image[0];
 	gl.t_boss.img = &image[1];
-    gl.t_enemy.img = &image[3];
+	gl.t_enemy.img = &image[2];
 	//
 	//Clear the screen to black
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -630,7 +617,7 @@ int check_keys(XEvent *e)
 			//make boss
 			make_boss(gl.xres, gl.yres, gl.t_boss);
 			//start timer for behavior
-			clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
+			clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 			break;
 		case XK_m:
 			//Toggles mouse cursor state
@@ -644,7 +631,7 @@ int check_keys(XEvent *e)
 		case XK_x:
 			//Toggle Jacob's feature mode
 			gl.test_mode = manage_mode(gl.test_mode);
-            make_enemy(gl.xres, gl.yres, gl.t_enemy);
+			make_enemy(gl.xres, gl.yres, gl.t_enemy);
 			break;
 		case XK_g:
 			break;
@@ -799,7 +786,10 @@ void physics()
 		}
 		++i;
 	}
-	//
+	//Update boss bullet positions
+	if (gl.boss_rush) {
+		boss_bulletPhysics();
+	}
 	//Update asteroid positions
 	Asteroid *a = g.ahead;
 	while (a) {
@@ -1155,8 +1145,9 @@ void render()
 
 	if (gl.boss_rush) {
 		start_boss_rush(gl.xres);
-		//call behavior; pass in timer
-		behavior(boss_bulletTimer);
+		move_boss(gl.xres);
+		behavior(gl.boss_bulletTimer);
+		boss_drawBullets();
 		return;
 	}
 
