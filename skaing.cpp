@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <GL/glx.h>
 #include <cstring>
-#include "fonts.h"
-#include "skaing.h"
-#include "image.h"
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string> 
+#include "fonts.h"
+#include "skaing.h"
+#include "image.h"
 
 //-----------------------------------------------------------------------------
 // Timer setup
@@ -19,18 +20,18 @@ extern double timeSpan;
 extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
+const int MAX_BULLETS = 5;
 
-//Fix mouse movement controls
+Bullet *barr = new Bullet[MAX_BULLETS];
+int nbullets = 0;
+Enemy boss;
+
 Enemy::Enemy(float wid, float xpos, float ypos, int move) {
-    w = wid;
+    width = wid;
     pos[0] = xpos;
     pos[1] = ypos;
     movement = move;
 }
-
-void move_boss(int xres);
-
-Enemy boss;
 
 unsigned int manage_help_state(unsigned int s)
 {
@@ -41,6 +42,17 @@ unsigned int manage_help_state(unsigned int s)
 unsigned int boss_rush_state(unsigned int s)
 {
     s = !s;
+    //Delete bullets when toggled off
+    if (s == 0) {
+        int i = 0;
+        while (nbullets > 0) {
+			memcpy(&barr[i], &barr[nbullets-1], 
+                                    sizeof(Bullet));
+            std::cout << "bullet deleted" << std::endl;
+			nbullets--;
+            ++i;
+        }
+    }
     return s;
 }
 
@@ -89,15 +101,12 @@ void start_boss_rush(int xres)
 {
     int w = 30;
     Rect r2;
-    r2.left = (xres / 2) - (w / 4);
-    r2.bot = 0 + (w / 5);
-    r2.center = 0;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    //Drawing Mode Indicator
+    //Draws Mode Indicator
     glColor4f(1.0, 0.0, 0.0, 0.8);
     glPushMatrix();
     glBegin(GL_TRIANGLE_STRIP);
@@ -119,6 +128,9 @@ void start_boss_rush(int xres)
     glEnd();
     glPopMatrix();
 
+    r2.left = (xres / 2) - (w / 4);
+    r2.bot = 0 + (w / 5);
+    r2.center = 0;
     glColor3f(1.0, 0.0, 1.0);
     ggprint16(&r2, 40, 0x2e281, "Boss Mode");
 
@@ -127,10 +139,10 @@ void start_boss_rush(int xres)
     glColor4f(1.0, 0.0, 0.0, 0.0);
     glTranslatef(boss.pos[0], boss.pos[1], 0.0f);
     glBegin(GL_QUADS);
-        glVertex2f( -boss.w, -boss.w);
-        glVertex2f( -boss.w, boss.w);
-        glVertex2f( boss.w, boss.w);
-        glVertex2f( boss.w, -boss.w);
+        glVertex2f( -boss.width, -boss.width);
+        glVertex2f( -boss.width, boss.width);
+        glVertex2f( boss.width, boss.width);
+        glVertex2f( boss.width, -boss.width);
     glEnd();
     
     // Bind image to hitbox position
@@ -147,29 +159,27 @@ void start_boss_rush(int xres)
 
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_QUADS);
-        glTexCoord2f(0, 1); glVertex2i(-boss.w, -boss.w);
-		glTexCoord2f(0, 0); glVertex2i(-boss.w, boss.w);
-		glTexCoord2f(1, 0); glVertex2i(boss.w, boss.w);
-		glTexCoord2f(1, 1); glVertex2i(boss.w, -boss.w);
+        glTexCoord2f(0, 1); glVertex2i(-boss.width, -boss.width);
+		glTexCoord2f(0, 0); glVertex2i(-boss.width, boss.width);
+		glTexCoord2f(1, 0); glVertex2i(boss.width, boss.width);
+		glTexCoord2f(1, 1); glVertex2i(boss.width, -boss.width);
 	glEnd();
     glPopMatrix();
-
-    move_boss(xres);
 }
 
 void make_boss(int xres, int yres, Texture boss_tex)
 {
     boss.enemy_tex = boss_tex;
-    boss.w = 40;
+    boss.width = 40;
     boss.pos[0] = xres / 2;
     boss.pos[1] = yres - (yres / 4);
     boss.movement = 0;
 }
 
 void move_boss(int xres) {
-    if (boss.pos[0] <= boss.w)
+    if (boss.pos[0] <= boss.width)
         boss.movement = 1;
-    if (boss.pos[0] >= xres - boss.w)
+    if (boss.pos[0] >= xres - boss.width)
         boss.movement = 0;
 
     if (boss.movement == 0)
@@ -179,16 +189,66 @@ void move_boss(int xres) {
 }
 
 void behavior(struct timespec &boss_bulletTimer) {
-    
-    //Every couple seconds, shoot 3 bullet burst at player
+    //Every couple seconds, shoot bullet at player
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     double ts = timeDiff(&boss_bulletTimer, &bt);
-    std::cout << ts << std::endl;
+    //std::cout << ts << std::endl;
 
+    //Copying method of bullet creation from asteroids.cpp
     //a little time between each bullet
-    if (ts > 1.0) {
+    if (ts > 2.0) {
         clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
-        //shoot bullet
+        if (nbullets < MAX_BULLETS) {
+            Bullet *b = &barr[nbullets];
+            b->pos[0] = boss.pos[0];
+            b->pos[1] = boss.pos[1];
+            //how fast bullet will move down
+            b->vel[1] = -0.8;
+            b->color[0] = 1.0f;
+            b->color[1] = 1.0f;
+            b->color[2] = 1.0f;
+            ++nbullets;
+        }
     }
+}
+
+void boss_bulletPhysics() {
+    int i = 0;
+	while (i < nbullets) {
+        Bullet *b = &barr[i];
+        b->pos[1] += b->vel[1];
+        //std::cout << "Bullet: " << std::to_string(i) << std::endl;
+        //std::cout << b->pos[1] << std::endl;
+        
+        if (b->pos[1] < 0.0) {
+            std::cout << "bullet deleted" << std::endl;
+			memcpy(&barr[i], &barr[nbullets-1], 
+                                    sizeof(Bullet));
+			nbullets--;
+		}
+        ++i;
+    }
+}
+
+void boss_drawBullets() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    for (int i=0; i < nbullets; i++) {
+		Bullet *b = &barr[i];
+		//bglColor3f(1.0, 1.0, 1.0);
+        glColor3fv(b->color);
+		glBegin(GL_POINTS);
+            glVertex2f(b->pos[0],      b->pos[1]);
+            glVertex2f(b->pos[0]-1.0f, b->pos[1]);
+            glVertex2f(b->pos[0]+1.0f, b->pos[1]);
+            glVertex2f(b->pos[0],      b->pos[1]-1.0f);
+            glVertex2f(b->pos[0],      b->pos[1]+1.0f);
+            glColor3f(0.8, 0.8, 0.8);
+            glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
+            glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
+            glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
+            glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
+		glEnd();
+	}
 }
