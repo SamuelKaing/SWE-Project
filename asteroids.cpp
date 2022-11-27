@@ -891,6 +891,21 @@ void physics()
 			i++;
 		}
 	}
+
+    //damage to enemy
+    if (gl.test_mode) {
+        int j = 0;
+        while (j < g.nbullets) {
+            Bullet *b = &g.barr[i];
+            if (enemy_hit(b)) {
+                memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+                g.nbullets--;
+            }
+            j++;
+        }
+    }
+
+
 	//COLLISION MODE
 	if(gl.juanfeature){
 		a = g.ahead;
@@ -1145,6 +1160,10 @@ void render()
 	if(gl.test_mode) {
 	    //show Jacob's feature mode
 	    tester_mode(gl.xres, gl.yres);
+        enemy_movement(gl.xres);
+        if (!enemy_isAlive()) {
+            gl.test_mode = 0;
+        }
 	    return;
 	}
 

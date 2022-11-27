@@ -171,7 +171,39 @@ void make_enemy(int xres, int yres, Texture enemy_tex)
     se.width = 20;
     se.pos[0] = xres / 2;
     se.pos[1] = yres - (yres / 4);
+    se.health = 5;
     se.movement = 0;
 }
 
+void enemy_movement(int xres) {
+    if (se.pos[0] <= se.width)
+        se.movement = 1;
+    if (se.pos[0] >= xres - se.width)
+        se.movement = 0;
+    if (se.movement == 0)
+        se.pos[0] -= 3;
+    if (se.movement == 1)
+        se.pos[0] += 3;
+}
 
+int enemy_hit(Bullet *b) {
+    float xrange1 = se.pos[0] - se.width;
+    float xrange2 = se.pos[0] + se.width;
+    float yrange1 = se.pos[1] - se.width;
+    float yrange2 = se.pos[1] + se.width;
+    bool was_hit = false;
+
+    if (b->pos[1] >= yrange1 && b->pos[1] <= yrange2)
+        if (b->pos[0] >= xrange1 && b->pos[0] <= xrange2) {
+            se.health--;
+            was_hit = true;
+        }
+    return was_hit;
+}
+
+int enemy_isAlive() {
+    if (se.health > 0)
+        return 1;
+    else
+        return 0;
+}
