@@ -20,7 +20,7 @@ extern double timeSpan;
 extern double timeDiff(struct timespec *start, struct timespec *end);
 extern void timeCopy(struct timespec *dest, struct timespec *source);
 //-----------------------------------------------------------------------------
-const int MAX_BULLETS = 5;
+const int MAX_BULLETS = 6;
 
 Bullet *barr = new Bullet[MAX_BULLETS];
 int nbullets = 0;
@@ -48,7 +48,7 @@ unsigned int boss_rush_state(unsigned int s)
         while (nbullets > 0) {
 			memcpy(&barr[i], &barr[nbullets-1], 
                                     sizeof(Bullet));
-            std::cout << "bullet deleted" << std::endl;
+            //std::cout << "bullet deleted" << std::endl;
 			nbullets--;
             ++i;
         }
@@ -104,7 +104,6 @@ void start_boss_rush(int xres)
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
 
     //Draws Mode Indicator
     glColor4f(1.0, 0.0, 0.0, 0.8);
@@ -134,6 +133,10 @@ void start_boss_rush(int xres)
     glColor3f(1.0, 0.0, 1.0);
     ggprint16(&r2, 40, 0x2e281, "Boss Mode");
 
+    glDisable(GL_BLEND);
+}
+
+void spawn_boss() {
     //Boss hitbox
     glPushMatrix();
     glColor4f(1.0, 0.0, 0.0, 0.0);
@@ -167,7 +170,7 @@ void start_boss_rush(int xres)
     glPopMatrix();
 }
 
-void make_boss(int xres, int yres, Texture boss_tex)
+void init_boss(int xres, int yres, Texture boss_tex)
 {
     boss.enemy_tex = boss_tex;
     boss.width = 40;
@@ -176,24 +179,23 @@ void make_boss(int xres, int yres, Texture boss_tex)
     boss.movement = 0;
 }
 
-void move_boss(int xres) {
+void boss_movement(int xres) {
     if (boss.pos[0] <= boss.width)
         boss.movement = 1;
     if (boss.pos[0] >= xres - boss.width)
         boss.movement = 0;
 
     if (boss.movement == 0)
-        boss.pos[0] -= 3;
+        boss.pos[0] -= 5;
     if (boss.movement == 1)
-        boss.pos[0] += 3;
+        boss.pos[0] += 5;
 }
 
-void behavior(struct timespec &boss_bulletTimer) {
+void boss_behavior(struct timespec &boss_bulletTimer) {
     //Every couple seconds, shoot bullet at player
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     double ts = timeDiff(&boss_bulletTimer, &bt);
-    //std::cout << ts << std::endl;
 
     //Copying method of bullet creation from asteroids.cpp
     //a little time between each bullet
@@ -205,9 +207,6 @@ void behavior(struct timespec &boss_bulletTimer) {
             b->pos[1] = boss.pos[1];
             //how fast bullet will move down
             b->vel[1] = -0.8;
-            b->color[0] = 1.0f;
-            b->color[1] = 1.0f;
-            b->color[2] = 1.0f;
             ++nbullets;
         }
     }
@@ -218,11 +217,9 @@ void boss_bulletPhysics() {
 	while (i < nbullets) {
         Bullet *b = &barr[i];
         b->pos[1] += b->vel[1];
-        //std::cout << "Bullet: " << std::to_string(i) << std::endl;
-        //std::cout << b->pos[1] << std::endl;
         
         if (b->pos[1] < 0.0) {
-            std::cout << "bullet deleted" << std::endl;
+            //std::cout << "bullet deleted" << std::endl;
 			memcpy(&barr[i], &barr[nbullets-1], 
                                     sizeof(Bullet));
 			nbullets--;
@@ -232,22 +229,22 @@ void boss_bulletPhysics() {
 }
 
 void boss_drawBullets() {
-    glEnable(GL_TEXTURE_2D);
-    for (int i=0; i < nbullets; i++) {
+    glDisable(GL_TEXTURE_2D);
+    for (int i = 0; i < nbullets; i++) {
 		Bullet *b = &barr[i];
-		//bglColor3f(1.0, 1.0, 1.0);
-        glColor3fv(b->color);
+		glColor3f(1.0, 0.0, 0.0);
 		glBegin(GL_POINTS);
             glVertex2f(b->pos[0],      b->pos[1]);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
             glVertex2f(b->pos[0],      b->pos[1]-1.0f);
             glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-            glColor3f(0.8, 0.8, 0.8);
+            //glColor3f(0.8, 0.8, 0.8);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
 		glEnd();
 	}
+    glEnable(GL_TEXTURE_2D);
 }
