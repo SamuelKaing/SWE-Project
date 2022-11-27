@@ -46,3 +46,5 @@ extern void boss_movement(int xres);
 extern void boss_behavior(struct timespec &boss_bulletTimer);
 extern void boss_bulletPhysics();
 extern void boss_drawBullets();
+extern int boss_hit(Bullet *b);
+extern int boss_isAlive();

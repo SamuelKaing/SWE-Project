@@ -858,14 +858,16 @@ void physics()
 					if (g.nasteroids == 0){
 					    	gl.level++;
 						//Game g = new Game(gl.level);
-					    	//replenishAsteroids(*g, g.nasteroids, gl.level);
+						//replenishAsteroids(*g, g.nasteroids, gl.level);
 					}
 				}
 				//delete the bullet...
 				memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
 				g.nbullets--;
-				if (g.nasteroids == 0)
+				if (g.nasteroids == 0) {
+					//spawn boss
 					g.reset(gl.level);
+				}
 				if (a == NULL)
 					break;
 			}
@@ -878,7 +880,16 @@ void physics()
 
 	//if collision with enemy hitbox damage ship
 	if (gl.boss_rush) {
-
+		int i = 0; 
+		while (i < g.nbullets) {
+			Bullet *b = &g.barr[i];
+			//pass b into function
+			if (boss_hit(b)) {
+				memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
+				g.nbullets--;
+			}
+			i++;
+		}
 	}
 	//COLLISION MODE
 	if(gl.juanfeature){
@@ -1149,6 +1160,8 @@ void render()
 		boss_movement(gl.xres);
 		boss_behavior(gl.boss_bulletTimer);
 		boss_drawBullets();
+		if (!boss_isAlive())
+			gl.boss_rush = 0;
 		return;
 	}
 

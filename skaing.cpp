@@ -11,17 +11,10 @@
 #include "skaing.h"
 #include "image.h"
 
-//-----------------------------------------------------------------------------
 // Timer setup
-extern struct timespec timeStart, timeCurrent;
-extern struct timespec timePause;
-extern double physicsCountdown;
-extern double timeSpan;
 extern double timeDiff(struct timespec *start, struct timespec *end);
-extern void timeCopy(struct timespec *dest, struct timespec *source);
-//-----------------------------------------------------------------------------
-const int MAX_BULLETS = 6;
 
+const int MAX_BULLETS = 6;
 Bullet *barr = new Bullet[MAX_BULLETS];
 int nbullets = 0;
 Enemy boss;
@@ -176,6 +169,7 @@ void init_boss(int xres, int yres, Texture boss_tex)
     boss.width = 40;
     boss.pos[0] = xres / 2;
     boss.pos[1] = yres - (yres / 4);
+    boss.health = 20;
     boss.movement = 0;
 }
 
@@ -219,7 +213,7 @@ void boss_bulletPhysics() {
         b->pos[1] += b->vel[1];
         
         if (b->pos[1] < 0.0) {
-            //std::cout << "bullet deleted" << std::endl;
+            std::cout << "bullet deleted" << std::endl;
 			memcpy(&barr[i], &barr[nbullets-1], 
                                     sizeof(Bullet));
 			nbullets--;
@@ -239,7 +233,6 @@ void boss_drawBullets() {
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
             glVertex2f(b->pos[0],      b->pos[1]-1.0f);
             glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-            //glColor3f(0.8, 0.8, 0.8);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
@@ -247,4 +240,28 @@ void boss_drawBullets() {
 		glEnd();
 	}
     glEnable(GL_TEXTURE_2D);
+}
+
+int boss_hit(Bullet *b) {
+    //define range between x and y boss positions
+    float xrange1 = boss.pos[0] - boss.width;
+    float xrange2 = boss.pos[0] + boss.width;
+    float yrange1 = boss.pos[1] - boss.width;
+    float yrange2 = boss.pos[1] + boss.width;
+    bool was_hit = false;
+
+    if (b->pos[1] >= yrange1 && b->pos[1] <= yrange2)
+        if (b->pos[0] >= xrange1 && b->pos[0] <= xrange2) {
+            boss.health--;
+            //std::cout << "boss hit" << std::endl;
+            was_hit = true;
+        }
+    return was_hit;
+}
+
+int boss_isAlive() {
+    if (boss.health > 0)
+        return 1;
+    else
+        return 0;
 }
