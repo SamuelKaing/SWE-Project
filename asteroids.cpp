@@ -131,7 +131,7 @@ public:
 
 class Game {
 public:
-	int level[3] = {2, 5, 10};
+	int level[3] = {2, 3, 4};
 	Ship ship;
 	Asteroid *ahead;
 	Bullet *barr;
@@ -143,6 +143,9 @@ public:
 public:
 	Game() {
 		//level[] = {2, 5, 10};
+		//ship.pos[0] = (Flt)(gl.xres/2);
+		//ship.pos[1] = (Flt)(gl.yres/4);
+		//ship.pos[2] = 0.0f;
 		ahead = NULL;
 		barr = new Bullet[MAX_BULLETS];
 		nasteroids = 0;
@@ -786,10 +789,7 @@ void physics()
 		}
 		++i;
 	}
-	//Update boss bullet positions
-	if (gl.boss_rush) {
-		boss_bulletPhysics();
-	}
+	
 	//Update asteroid positions
 	Asteroid *a = g.ahead;
 	while (a) {
@@ -878,8 +878,12 @@ void physics()
 		a = a->next;
 	}
 
-	//if collision with enemy hitbox damage ship
+	
 	if (gl.boss_rush) {
+		//Update boss bullet positions
+		boss_bulletPhysics();
+
+		//Checks collision of bullet with boss
 		int i = 0; 
 		while (i < g.nbullets) {
 			Bullet *b = &g.barr[i];
@@ -890,9 +894,15 @@ void physics()
 			}
 			i++;
 		}
-	}
 
-    //damage to enemy
+		//Check ship collision with boss bullet
+		if (player_hit(g.ship.pos)) {
+			std::cout << "Player ship hit" << std::endl;
+			//gl.gameover = 1;
+		}
+	}
+	
+	//damage to enemy
     if (gl.test_mode) {
         int j = 0;
         while (j < g.nbullets) {
@@ -904,7 +914,6 @@ void physics()
             j++;
         }
     }
-
 
 	//COLLISION MODE
 	if(gl.juanfeature){
@@ -1160,7 +1169,7 @@ void render()
 	if(gl.test_mode) {
 	    //show Jacob's feature mode
 	    tester_mode(gl.xres, gl.yres);
-        enemy_movement(gl.xres);
+		enemy_movement(gl.xres);
         if (!enemy_isAlive()) {
             gl.test_mode = 0;
         }

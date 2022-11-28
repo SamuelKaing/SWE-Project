@@ -1,9 +1,10 @@
 #include "image.h"
 
+typedef float Vec[3];
+
 #ifndef _BULLET_H
 #define _BULLET_H
 
-typedef float Vec[3];
 class Bullet {
 public:
 	Vec pos;
@@ -34,8 +35,6 @@ class Enemy
 
 #endif
 
-
-
 extern unsigned int manage_help_state(unsigned int s);
 extern void show_controls(int xres, int yres);
 extern unsigned int boss_rush_state(unsigned int s);
@@ -48,3 +47,4 @@ extern void boss_bulletPhysics();
 extern void boss_drawBullets();
 extern int boss_hit(Bullet *b);
 extern int boss_isAlive();
+extern int player_hit(Vec ship_pos);
