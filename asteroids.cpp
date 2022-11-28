@@ -1245,7 +1245,7 @@ void render()
 
 	if (gl.feature_weapons) {
 		
-		show_feature_weapons(gl.xres, gl.yres, gl.weapon);
+		show_feature_weapons(gl.xres, gl.yres, gl.weapon, g.ship.pos);
 		return;
 	}
 	
