@@ -897,8 +897,8 @@ void physics()
 
 		//Check ship collision with boss bullet
 		if (player_hit(g.ship.pos)) {
-			std::cout << "Player ship hit" << std::endl;
-			//gl.gameover = 1;
+			//std::cout << "Player ship hit" << std::endl;
+			gl.gameover = 1;
 		}
 	}
 	
@@ -976,7 +976,7 @@ void physics()
 		struct timespec bt;
 		clock_gettime(CLOCK_REALTIME, &bt);
 		double ts = timeDiff(&g.bulletTimer, &bt);
-		if (ts > 0.1) {
+		if (ts > 0.3) {
 			timeCopy(&g.bulletTimer, &bt);
 			if (g.nbullets < MAX_BULLETS) {
 				//shoot a bullet...

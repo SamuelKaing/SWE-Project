@@ -13,6 +13,7 @@
 
 // Timer setup
 extern double timeDiff(struct timespec *start, struct timespec *end);
+void clean_bullets();
 
 const int MAX_BULLETS = 6;
 Bullet *barr = new Bullet[MAX_BULLETS];
@@ -37,13 +38,7 @@ unsigned int boss_rush_state(unsigned int s)
     s = !s;
     //Delete bullets when toggled off
     if (s == 0) {
-        int i = 0;
-        while (nbullets > 0) {
-			memcpy(&barr[i], &barr[nbullets-1], 
-                                    sizeof(Bullet));
-			nbullets--;
-            ++i;
-        }
+        clean_bullets();
     }
     return s;
 }
@@ -199,7 +194,7 @@ void boss_behavior(struct timespec &boss_bulletTimer) {
             b->pos[0] = boss.pos[0];
             b->pos[1] = boss.pos[1];
             //how fast bullet will move down
-            b->vel[1] = -0.8;
+            b->vel[1] = -1.0;
             ++nbullets;
         }
     }
@@ -212,7 +207,6 @@ void boss_bulletPhysics() {
         b->pos[1] += b->vel[1];
         
         if (b->pos[1] < 0.0) {
-            std::cout << "bullet deleted" << std::endl;
 			memcpy(&barr[i], &barr[nbullets-1], 
                                     sizeof(Bullet));
 			nbullets--;
@@ -269,6 +263,7 @@ void boss_drawBullets() {
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
             glVertex2f(b->pos[0],      b->pos[1]-1.0f);
             glVertex2f(b->pos[0],      b->pos[1]+1.0f);
+            glColor3f(0.5, 0.0, 0.0);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
@@ -281,6 +276,18 @@ void boss_drawBullets() {
 int boss_isAlive() {
     if (boss.health > 0)
         return 1;
-    else
+    else {
+        clean_bullets();
         return 0;
+    }
+}
+
+void clean_bullets() {
+    int i = 0;
+    while (nbullets > 0) {
+        memcpy(&barr[i], &barr[nbullets-1], 
+                                sizeof(Bullet));
+        nbullets--;
+        ++i;
+    }
 }
