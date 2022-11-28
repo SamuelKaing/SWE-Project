@@ -45,7 +45,7 @@ const float timeslice = 1.0f;
 const float gravity = -0.2f;
 #define PI 3.141592653589793
 #define ALPHA 1
-const int MAX_BULLETS = 11;
+//const int MAX_BULLETS = 11;
 const Flt MINIMUM_ASTEROID_SIZE = 60.0;
 
 //-----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public:
 	char keys[65536];
 	unsigned int mouse_cursor;
 	unsigned int level, credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
-	int weapon;
+	int weapon, max_bullets;
 	struct timespec boss_bulletTimer;
 	Global() {
 		level = 1;
@@ -86,6 +86,7 @@ public:
 		juanfeature = 0;
 		feature_weapons = 0;
 		weapon = 0;
+		max_bullets = 1;
 	}
 } gl;
 
@@ -147,7 +148,7 @@ public:
 		//ship.pos[1] = (Flt)(gl.yres/4);
 		//ship.pos[2] = 0.0f;
 		ahead = NULL;
-		barr = new Bullet[MAX_BULLETS];
+		barr = new Bullet[gl.max_bullets];
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
@@ -187,7 +188,7 @@ public:
 
 	void reset(int newLevel){
 		ahead = NULL;
-		barr = new Bullet[MAX_BULLETS];
+		barr = new Bullet[gl.max_bullets];
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
@@ -479,7 +480,7 @@ void check_mouse(XEvent *e)
 			if (ts > 0.1) {
 				timeCopy(&g.bulletTimer, &bt);
 				//shoot a bullet...
-				if (g.nbullets < MAX_BULLETS) {
+				if (g.nbullets < gl.max_bullets) {
 					Bullet *b = &g.barr[g.nbullets];
 					timeCopy(&b->time, &bt);
 					b->pos[0] = g.ship.pos[0];
@@ -978,7 +979,7 @@ void physics()
 		double ts = timeDiff(&g.bulletTimer, &bt);
 		if (ts > 0.3) {
 			timeCopy(&g.bulletTimer, &bt);
-			if (g.nbullets < MAX_BULLETS) {
+			if (g.nbullets < gl.max_bullets) {
 				//shoot a bullet...
 				//Bullet *b = new Bullet;
 				Bullet *b = &g.barr[g.nbullets];
@@ -1199,7 +1200,7 @@ void render()
 	
        	if (gl.feature_weapons) {
             
-            show_feature_weapons(gl.xres, gl.yres, gl.weapon);
+            show_feature_weapons(gl.xres, gl.yres, gl.weapon, gl.max_bullets);
             return;
         }
 	//if(g.nasteroids == 0){
