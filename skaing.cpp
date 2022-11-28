@@ -255,9 +255,9 @@ int player_hit(Vec ship_pos) {
 void boss_drawBullets() {
     glDisable(GL_TEXTURE_2D);
     for (int i = 0; i < nbullets; i++) {
-		Bullet *b = &barr[i];
-		glColor3f(1.0, 0.0, 0.0);
-		glBegin(GL_POINTS);
+	Bullet *b = &barr[i];
+	glColor3f(1.0, 0.4, 0.4);
+	glBegin(GL_POINTS);
             glVertex2f(b->pos[0],      b->pos[1]);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
@@ -268,7 +268,7 @@ void boss_drawBullets() {
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
-		glEnd();
+	glEnd();
 	}
     glEnable(GL_TEXTURE_2D);
 }
