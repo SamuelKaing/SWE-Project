@@ -67,7 +67,8 @@ public:
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
-	unsigned int level, credits, p_screen, help, gameover, start, boss_rush, test_mode, juanfeature, feature_weapons;
+	unsigned int level, credits, p_screen, help, gameover, start, 
+			boss_rush, test_mode, juanfeature, feature_weapons, win_screen;
 	int weapon, max_bullets;
 	struct timespec boss_bulletTimer;
 	Global() {
@@ -86,7 +87,8 @@ public:
 		juanfeature = 0;
 		feature_weapons = 0;
 		weapon = 0;
-		max_bullets = 1;
+		max_bullets = 11;
+		win_screen = 0;
 	}
 } gl;
 
@@ -144,9 +146,6 @@ public:
 public:
 	Game() {
 		//level[] = {2, 5, 10};
-		//ship.pos[0] = (Flt)(gl.xres/2);
-		//ship.pos[1] = (Flt)(gl.yres/4);
-		//ship.pos[2] = 0.0f;
 		ahead = NULL;
 		barr = new Bullet[gl.max_bullets];
 		nasteroids = 0;
@@ -519,7 +518,7 @@ void check_mouse(XEvent *e)
 		    return;
 		if (gl.help)
 		    return;
-		if(g.nasteroids == 0)
+		if(gl.win_screen)
 		    return;
 
 		//
@@ -662,11 +661,23 @@ int check_keys(XEvent *e)
 
 			break;
 		case XK_l:
-			Asteroid *a = g.ahead;
-			for (int i = 0; i<g.nasteroids; i++){
-				deleteAsteroid(&g, a);
+			if (gl.boss_rush) {
+				gl.boss_rush = 0;
+				if (gl.level < 3)
+					g.reset(++gl.level);
+				else
+					gl.win_screen = 1;
 			}
-			g.nasteroids = 0;
+			else {
+				//Delete all asteroids
+				Asteroid *a = g.ahead;
+				while (a) {
+					Asteroid *savea = a->next;
+					deleteAsteroid(&g, a);
+					a = savea;
+				}
+				g.nasteroids = 0;
+			}
 			break;
 	}
 	return 0;
@@ -735,24 +746,27 @@ void physics()
 	    return;
         if (gl.gameover)
 	    return;
-	if(g.nasteroids == 0)
-	    return;
+	if(gl.win_screen)
+	   return;
 	Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
 	g.ship.pos[1] += g.ship.vel[1];
 	//Check for collision with window edges
-	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] += (float)gl.xres;
+	if (g.ship.pos[0] < 8.0) {
+		g.ship.pos[0] = 8;
+		//g.ship.pos[0] += (float)gl.xres;
 	}
-	else if (g.ship.pos[0] > (float)gl.xres) {
-		g.ship.pos[0] -= (float)gl.xres;
+	else if (g.ship.pos[0] > ((float)gl.xres - 8)) {
+		g.ship.pos[0] = (float)gl.xres - 8;
+		//g.ship.pos[0] -= (float)gl.xres;
 	}
-	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] += (float)gl.yres;
+	else if (g.ship.pos[1] < 12.0) {
+		g.ship.pos[1] = 12;
+		//g.ship.pos[1] += (float)gl.yres;
 	}
-	else if (g.ship.pos[1] > (float)gl.yres) {
-		g.ship.pos[1] -= (float)gl.yres;
+	else if (g.ship.pos[1] > ((float)gl.yres - 12)) {
+		g.ship.pos[1] = (float)gl.yres - 12;
 	}
 	//
 	//
@@ -786,7 +800,10 @@ void physics()
 			b->pos[1] += (float)gl.yres;
 		}
 		else if (b->pos[1] > (float)gl.yres) {
-			b->pos[1] -= (float)gl.yres;
+			//b->pos[1] -= (float)gl.yres;
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
+				sizeof(Bullet));
+			g.nbullets--;
 		}
 		++i;
 	}
@@ -856,8 +873,8 @@ void physics()
 					deleteAsteroid(&g, a);
 					a = savea;
 					g.nasteroids--;
-					if (g.nasteroids == 0){
-					    	gl.level++;
+					if (g.nasteroids == 0 && gl.level < 4){
+					    //gl.level++;
 						//Game g = new Game(gl.level);
 						//replenishAsteroids(*g, g.nasteroids, gl.level);
 					}
@@ -865,10 +882,14 @@ void physics()
 				//delete the bullet...
 				memcpy(&g.barr[i], &g.barr[g.nbullets-1], sizeof(Bullet));
 				g.nbullets--;
-				if (g.nasteroids == 0) {
-					//spawn boss
-					g.reset(gl.level);
-				}
+				//if (g.nasteroids == 0) {
+				//	gl.boss_rush = 1;
+				//	//make boss
+				//	init_boss(gl.xres, gl.yres, gl.t_boss);
+				//	//start timer for behavior
+				//	clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
+				//	g.nasteroids--;
+				//}
 				if (a == NULL)
 					break;
 			}
@@ -877,6 +898,15 @@ void physics()
 		if (a == NULL)
 			break;
 		a = a->next;
+	}
+
+	if (g.nasteroids == 0) {
+		gl.boss_rush = 1;
+		//make boss
+		init_boss(gl.xres, gl.yres, gl.t_boss);
+		//start timer for behavior
+		clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
+		g.nasteroids--;
 	}
 
 	
@@ -940,13 +970,15 @@ void physics()
 		//g.ship.angle += 4.0;
 		//if (g.ship.angle >= 360.0f)
 		//	g.ship.angle -= 360.0f;
-		g.ship.pos[0] -= 10;/////
+		if (g.ship.pos[0] > 15)
+			g.ship.pos[0] -= 8;
 	}
 	if (gl.keys[XK_Right]) {
 		//g.ship.angle -= 4.0;
 		//if (g.ship.angle < 0.0f)
 		//	g.ship.angle += 360.0f;
-		g.ship.pos[0] += 10;
+		if (g.ship.pos[0] < ((float)gl.xres - 15))
+			g.ship.pos[0] += 8;
 	}
 	if (gl.keys[XK_Up]) {
 		//apply thrust
@@ -966,10 +998,12 @@ void physics()
 			//g.ship.vel[1] *= speed;
 		}
 		
-		g.ship.pos[1] += 8;
+		if (g.ship.pos[1] < ((float)gl.yres - 12))
+			g.ship.pos[1] += 8;
 	}
 	if (gl.keys[XK_Down]) {
-		g.ship.pos[1] -= 8;
+		if (g.ship.pos[1] > 12)
+			g.ship.pos[1] -= 8;
 		//g.ship.vel[1] -= 0.08;
 	}
 	if (gl.keys[XK_space]) {
@@ -1183,30 +1217,41 @@ void render()
 	    return;
 	}
 
+	if (g.nasteroids == 0) {
+		gl.boss_rush = 1;
+		init_boss(gl.xres, gl.yres, gl.t_boss);
+	}
+
 	if (gl.boss_rush) {
-		start_boss_rush(gl.xres);
+		if (g.nasteroids != -1)
+			start_boss_rush(gl.xres);
 		spawn_boss();
 		boss_movement(gl.xres);
 		boss_behavior(gl.boss_bulletTimer);
 		boss_drawBullets();
-		if (!boss_isAlive())
+		if (!boss_isAlive()) {
 			gl.boss_rush = 0;
+			if (g.nasteroids == -1 && gl.level < 3)
+				g.reset(++gl.level);
+			else if (g.nasteroids == -1 && gl.level == 3)
+				gl.win_screen = 1;
+		}
 		return;
 	}
 
 	if(gl.juanfeature) {
 	    juanfeature(gl.xres,gl.yres);
 	}
-	
-       	if (gl.feature_weapons) {
-            
-            show_feature_weapons(gl.xres, gl.yres, gl.weapon, gl.max_bullets, g.ship.pos);
 
-            return;
-        }
-	//if(g.nasteroids == 0){
-	//    win_screen(gl.xres, gl.yres);
-	//}
+	if (gl.feature_weapons) {
+		
+		show_feature_weapons(gl.xres, gl.yres, gl.weapon);
+		return;
+	}
+	
+	if(gl.win_screen){
+		win_screen(gl.xres, gl.yres);
+	}
 
 
 }
