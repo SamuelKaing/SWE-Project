@@ -1004,7 +1004,7 @@ void physics(Game *g)
     }
 
 	//COLLISION MODE
-	if(gl.juanfeature){
+//	if(gl.juanfeature){
 		a = g->ahead;
 		while(a){
 			Flt test1,test2;
@@ -1019,7 +1019,7 @@ void physics(Game *g)
 				break;
 			a = a ->next;
 		}
-	}
+//	}
 
 	//---------------------------------------------------
 	//check keys pressed now
