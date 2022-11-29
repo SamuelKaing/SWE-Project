@@ -178,9 +178,9 @@ void boss_movement(int xres, int level) { //need level
         boss.movement = 0;
 
     if (boss.movement == 0)
-        boss.pos[0] = boss.pos[0] - (2 + (1 * level));
+        boss.pos[0] = boss.pos[0] - (2 + (0.6 * level));
     if (boss.movement == 1)
-        boss.pos[0] = boss.pos[0] + (2 + (1 * level));
+        boss.pos[0] = boss.pos[0] + (2 + (0.6 * level));
 }
 
 void boss_behavior(struct timespec &boss_bulletTimer, int level) { //need level
@@ -192,7 +192,7 @@ void boss_behavior(struct timespec &boss_bulletTimer, int level) { //need level
 
     //Copying method of bullet creation from asteroids.cpp
     //a little time between each bullet
-    if (ts > 2.0) {
+    if (ts > (2.0 - (0.5 * level))) {
         clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
         if (nbullets < MAX_BULLETS) {
             Bullet *b = &barr[nbullets];
@@ -268,7 +268,7 @@ void boss_drawBullets() {
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
             glVertex2f(b->pos[0],      b->pos[1]-1.0f);
             glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-            glColor3f(0.5, 0.0, 0.0);
+            glColor3f(1.0, 0.4, 0.4);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
