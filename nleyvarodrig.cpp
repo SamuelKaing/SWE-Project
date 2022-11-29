@@ -55,16 +55,16 @@ Image::Image(const char *fname){
 void show_credits(Texture t, int xres, int yres) 
 {
 	int imgw = 50;
-    	Rect r2;
+    Rect r2;
 	r2.left = xres /2 - imgw;
-        r2.bot = yres/2;
+    r2.bot = yres/2;
 	r2.center = 0;	
     	int xcent = xres / 2;
 	int ycent = yres / 2;
 	int w = 200;
 	int iycent = ycent + 2*imgw;
 	
-	glColor3f(1.0f, 1.0f, 0.0f);
+	glColor3f(.5f, .58f, .20f);
 	glBegin(GL_QUADS);
 		glVertex2f( xcent-w, ycent-w);
 		glVertex2f( xcent-w, ycent+w);
@@ -100,24 +100,58 @@ void show_credits(Texture t, int xres, int yres)
 	ggprint8b(&r2, 15, 0x000000 , "Juan Sanchez");
 	ggprint8b(&r2, 15, 0x000000 , "Raul Verduzco");
 }
-//On Hold
-/*
-void menu(int xres, int yres){ 
-    	Rect menu;
-	int w = 50;
-    	menu.left = xres/2;
-	menu.bot = yres/2;
-   	int xcent = xres / 2;
-    	int ycent = yres / 2;
 
-	glColor3f(1.0f, 1.0f, 0.0f);
+
+void menu(int xres, int yres){ 
+    Rect resume, quit;
+	
+	int w = 200;
+	int heightW = 35;
+	int widthW = 100;
+   	int xcent = xres / 2;
+    int ycent = yres / 2;
+
+	int quityCent = ycent / 2;
+	int resyCent =  ycent * 1.35;
+
+	resume.left = xcent;
+	resume.bot = resyCent;
+	resume.center = 1;
+
+
+	quit.left = xcent;
+	quit.bot = quityCent;
+	quit.center = 1;
+
+	glColor3f(.240f, .190f, .74f);
 	glBegin(GL_QUADS);
 		glVertex2f( xcent-w, ycent-w);
 		glVertex2f( xcent-w, ycent+w);
 		glVertex2f( xcent+w, ycent+w);
 		glVertex2f( xcent+w, ycent-w);	
 	glEnd();	
-}*/
+
+	glColor3f(.64f, .55f, .55f);
+	glBegin(GL_QUADS);
+		glVertex2f( xcent-widthW, resyCent-heightW);
+		glVertex2f( xcent-widthW, resyCent+heightW);
+		glVertex2f( xcent+widthW, resyCent+heightW);
+		glVertex2f( xcent+widthW, resyCent-heightW);
+	glEnd();	
+	glColor3i(1, 1, 1);
+	ggprint16(&resume, 15, 0x000000, "Resume");	
+	
+	glColor3f(.64f, .55f, .55f);
+	glBegin(GL_QUADS);
+		glVertex2f( xcent-widthW, quityCent-heightW);
+		glVertex2f( xcent-widthW, quityCent+heightW);
+		glVertex2f( xcent+widthW, quityCent+heightW);
+		glVertex2f( xcent+widthW, quityCent-heightW);
+	glEnd();	
+	glColor3i(1, 1 , 1);
+	ggprint16(&quit, 15, 0x000000, "Quit");	
+		
+}
 
 void ship_movement(int xres, int yres){
     	glColor3f(0.0f, 0.0f, 1.0f);
