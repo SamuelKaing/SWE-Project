@@ -430,6 +430,7 @@ void init_opengl(void)
 	gl.t.img = &image[0];
 	gl.t_boss.img = &image[1];
 	gl.t_enemy.img = &image[2];
+	gl.t_back.img = &image[3];
 	//
 	//Clear the screen to black
 	glClearColor(0.0, 0.0, 0.0, 1.0);
