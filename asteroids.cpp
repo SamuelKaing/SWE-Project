@@ -63,7 +63,7 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 
 class Global {
 public:
-	Texture t, t_boss, t_enemy;
+	Texture t, t_boss, t_enemy, t_back;
 	int xres, yres;
 	char keys[65536];
 	unsigned int mouse_cursor;
@@ -233,7 +233,8 @@ public:
 } g;
 
 //Image Class
-Image image[3] = {"SInvaders.jpeg", "images/boss.png", "images/s_enemy.jpeg"};
+Image image[4] = {"SInvaders.jpeg", "images/boss.png", 
+		  "images/s_enemy.jpeg", "images/background.png"};
 
 //X Windows variables
 class X11_wrapper {
@@ -435,6 +436,16 @@ void init_opengl(void)
 	//Do this to allow fonts
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
+	
+	//Init background texture
+	glGenTextures(1, &gl.t_back.backText);
+	int width = gl.t_back.img->w;
+	int height = gl.t_back.img->h;
+	glBindTexture(GL_TEXTURE_2D, gl.t_back.backText);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0,
+						GL_RGB, GL_UNSIGNED_BYTE, gl.t_back.img->data);
 }
 
 void normalize2d(Vec v)
@@ -1058,7 +1069,7 @@ void start_screen()
     int xcent = gl.xres / 2;
     int ycent = gl.yres / 2;
     int w = 600;
-    glColor3f(1.0f, 0.0f, 0.0f);
+    glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
         glVertex2f( xcent-w, ycent-w);
         glVertex2f( xcent-w, ycent+w);
@@ -1066,20 +1077,29 @@ void start_screen()
         glVertex2f( xcent+w, ycent-w);
     glEnd();
 
-    ggprint8b(&r3, 50, 0x000000 , "Space Invaders");
-    ggprint8b(&r3, 30, 0x000000 , "Press 'S' to start");
+    ggprint8b(&r3, 50, 0x2e281 , "Space Invaders");
+    ggprint8b(&r3, 30, 0x2e281 , "Press 'S' to start");
 
 }
 
 void render()
 {
+	glClear(GL_COLOR_BUFFER_BIT);
+	//Draw background
+	glColor3f(1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, gl.t_back.backText);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0, 1); glVertex2i(0, 0);
+		glTexCoord2f(0, 0); glVertex2i(0, gl.yres);
+		glTexCoord2f(1, 0); glVertex2i(gl.xres, gl.yres);
+		glTexCoord2f(1, 1); glVertex2i(gl.xres, 0);
+	glEnd();
+	
 	if (gl.start) {
 		start_screen();
 		return;
 	}
 	Rect r;
-	glClear(GL_COLOR_BUFFER_BIT);
-	//
 	r.bot = gl.yres - 20;
 	r.left = 10;
 	r.center = 0;
