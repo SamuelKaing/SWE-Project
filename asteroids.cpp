@@ -182,6 +182,10 @@ public:
 			ahead = a;
 			++nasteroids;
 		}
+        for (int z=0; z<2;z++) {
+            make_enemy(gl.xres, gl.yres, gl.t_enemy);
+            z++;
+        }
 		clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	}
 
@@ -512,8 +516,10 @@ void check_mouse(XEvent *e, Game *g)
 			if (ts > 0.1) {
 				timeCopy(&g->bulletTimer, &bt);
 				//shoot a bullet...
+
 				if (g->nbullets < gl.max_bullets) {
 					Bullet *b = &g->barr[g->nbullets];
+
 					timeCopy(&b->time, &bt);
 					b->pos[0] = g->ship.pos[0];
 					b->pos[1] = g->ship.pos[1];
@@ -698,6 +704,7 @@ int check_keys(XEvent *e, Game *g)
 				gl.boss_rush = 0;
 				if (gl.level < 3)
 					g->reset(++gl.level);
+
 				else
 					gl.win_screen = 1;
 			}
@@ -710,6 +717,7 @@ int check_keys(XEvent *e, Game *g)
 					a = savea;
 				}
 				g->nasteroids = 0;
+
 			}
 			break;
 		case XK_r:
@@ -790,6 +798,7 @@ void physics(Game *g)
 	g->ship.pos[0] += g->ship.vel[0];
 	g->ship.pos[1] += g->ship.vel[1];
 	//Check for collision with window edges
+
 	if (g->ship.pos[0] < 8.0) {
 		g->ship.pos[0] = 8;
 		//g->ship.pos[0] += (float)gl.xres;
@@ -804,6 +813,7 @@ void physics(Game *g)
 	}
 	else if (g->ship.pos[1] > ((float)gl.yres - 12)) {
 		g->ship.pos[1] = (float)gl.yres - 12;
+
 	}
 	//
 	//
@@ -838,9 +848,11 @@ void physics(Game *g)
 		}
 		else if (b->pos[1] > (float)gl.yres) {
 			//b->pos[1] -= (float)gl.yres;
+
 			memcpy(&g->barr[i], &g->barr[g->nbullets-1],
 				sizeof(Bullet));
 			g->nbullets--;
+
 		}
 		++i;
 	}
@@ -920,12 +932,15 @@ void physics(Game *g)
 				memcpy(&g->barr[i], &g->barr[g->nbullets-1], sizeof(Bullet));
 				g->nbullets--;
 				//if (g->nasteroids == 0) {
+
 				//	gl.boss_rush = 1;
 				//	//make boss
 				//	init_boss(gl.xres, gl.yres, gl.t_boss);
 				//	//start timer for behavior
 				//	clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
+
 				//	g->nasteroids--;
+
 				//}
 				if (a == NULL)
 					break;
@@ -938,11 +953,13 @@ void physics(Game *g)
 	}
 
 	if (g->nasteroids == 0) {
+
 		gl.boss_rush = 1;
 		//make boss
 		init_boss(gl.xres, gl.yres, gl.t_boss);
 		//start timer for behavior
 		clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
+
 		g->nasteroids--;
 	}
 
@@ -953,17 +970,20 @@ void physics(Game *g)
 
 		//Checks collision of bullet with boss
 		int i = 0; 
+
 		while (i < g->nbullets) {
 			Bullet *b = &g->barr[i];
 			//pass b into function
 			if (boss_hit(b)) {
 				memcpy(&g->barr[i], &g->barr[g->nbullets-1], sizeof(Bullet));
 				g->nbullets--;
+
 			}
 			i++;
 		}
 
 		//Check ship collision with boss bullet
+
 		if (player_hit(g->ship.pos)) {
 			//std::cout << "Player ship hit" << std::endl;
 			gl.gameover = 1;
@@ -1004,6 +1024,7 @@ void physics(Game *g)
 	//---------------------------------------------------
 	//check keys pressed now
 	if (gl.keys[XK_Left]) {
+
 		//g->ship.angle += 4.0;
 		//if (g->ship.angle >= 360.0f)
 		//	g->ship.angle -= 360.0f;
@@ -1035,6 +1056,7 @@ void physics(Game *g)
 			//g->ship.vel[1] *= speed;
 		}
 		
+
 		if (g->ship.pos[1] < ((float)gl.yres - 12))
 			g->ship.pos[1] += 8;
 	}
@@ -1047,10 +1069,12 @@ void physics(Game *g)
 		//a little time between each bullet
 		struct timespec bt;
 		clock_gettime(CLOCK_REALTIME, &bt);
+
 		double ts = timeDiff(&g->bulletTimer, &bt);
 		if (ts > 0.3) {
 			timeCopy(&g->bulletTimer, &bt);
 			if (g->nbullets < gl.max_bullets) {
+
 				//shoot a bullet...
 				//Bullet *b = new Bullet;
 				Bullet *b = &g->barr[g->nbullets];
@@ -1251,7 +1275,8 @@ void render(Game *g)
 	if(gl.test_mode) {
 	    //show Jacob's feature mode
 	    tester_mode(gl.xres, gl.yres);
-		enemy_movement(gl.xres);
+
+		enemy_movement(gl.yres);
         if (!enemy_isAlive()) {
             gl.test_mode = 0;
         }
@@ -1265,6 +1290,7 @@ void render(Game *g)
 	}
 
 	if (g->nasteroids == 0) {
+
 		gl.boss_rush = 1;
 		init_boss(gl.xres, gl.yres, gl.t_boss);
 	}
@@ -1278,9 +1304,11 @@ void render(Game *g)
 		boss_drawBullets();
 		if (!boss_isAlive()) {
 			gl.boss_rush = 0;
+
 			if (g->nasteroids == -1 && gl.level < 3)
 				g->reset(++gl.level);
 			else if (g->nasteroids == -1 && gl.level == 3)
+
 				gl.win_screen = 1;
 		}
 		return;
