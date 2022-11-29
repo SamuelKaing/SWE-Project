@@ -87,7 +87,7 @@ public:
 		juanfeature = 0;
 		feature_weapons = 0;
 		weapon = 0;
-		max_bullets = 11;
+		max_bullets = 1;
 		win_screen = 0;
 	}
 } gl;
@@ -1020,6 +1020,22 @@ void physics(Game *g)
 			a = a ->next;
 		}
 //	}
+//	Weapon switch
+   if (gl.feature_weapons) {
+
+        if (weapon_switch(g->ship.pos)) {
+            gl.max_bullets = 11;
+        }
+	else if (weapon_switch2(g->ship.pos)) {
+            gl.max_bullets = 3;
+        }
+	else if (weapon_switch2(g->ship.pos)) {
+            gl.max_bullets = 5;
+        }
+
+
+    }
+
 
 	//---------------------------------------------------
 	//check keys pressed now
