@@ -1062,13 +1062,16 @@ void physics()
 
 void start_screen()
 {
-    Rect r3;
-    r3.left = gl.xres /2.5;
-    r3.bot = gl.yres/2.0;
-    r3.center = 0;
-    int xcent = gl.xres / 2;
-    int ycent = gl.yres / 2;
-    int w = 600;
+	Rect r3;
+	r3.left = gl.xres /2.5;
+	r3.bot = gl.yres/2.0;
+	r3.center = 0;
+	int xcent = gl.xres / 2;
+	int ycent = gl.yres / 2;
+	int w = 600;
+	
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
     glBegin(GL_QUADS);
         glVertex2f( xcent-w, ycent-w);
@@ -1076,10 +1079,9 @@ void start_screen()
         glVertex2f( xcent+w, ycent+w);
         glVertex2f( xcent+w, ycent-w);
     glEnd();
-
     ggprint8b(&r3, 50, 0x2e281 , "Space Invaders");
     ggprint8b(&r3, 30, 0x2e281 , "Press 'S' to start");
-
+	glDisable(GL_BLEND);
 }
 
 void render()
