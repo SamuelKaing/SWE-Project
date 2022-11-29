@@ -75,13 +75,17 @@ void show_controls(int xres, int yres)
     r2.bot = (yres / 2) + (w - 25);
 
     ggprint16(&r2, 40, 0x2E281, "Controls");
-    ggprint10(&r2, 40, 0x2e281, "Movement -- Arrow Keys");
-    ggprint10(&r2, 40, 0x2e281, "Shoot -- Spacebar");
-    ggprint10(&r2, 40, 0x2e281, "Pause -- p");
-    ggprint10(&r2, 40, 0x2e281, "Credits -- c");
-    ggprint10(&r2, 40, 0x2e281, "Collision Mode -- h");
-    ggprint10(&r2, 40, 0x2e281, "Boss Mode -- b");
-    ggprint10(&r2, 40, 0x2e281, "Jacob's Feature mode -- x");
+    ggprint8b(&r2, 30, 0x2e281, "Movement -- Arrow Keys");
+    ggprint8b(&r2, 30, 0x2e281, "Shoot -- Spacebar");
+    ggprint8b(&r2, 30, 0x2e281, "Pause -- p");
+    ggprint8b(&r2, 30, 0x2e281, "Credits -- c");
+    ggprint8b(&r2, 30, 0x2e281, "Restart Level -- r");
+    ggprint8b(&r2, 30, 0x2e281, "Menu -- m");
+    ggprint8b(&r2, 30, 0x2e281, "Collision Mode -- h");
+    ggprint8b(&r2, 30, 0x2e281, "Boss Mode -- b");
+    ggprint8b(&r2, 30, 0x2e281, "Jacob's Feature mode -- x");
+    ggprint8b(&r2, 30, 0x2e281, "Level Cycle -- l");
+    
 }
 
 void start_boss_rush(int xres) 

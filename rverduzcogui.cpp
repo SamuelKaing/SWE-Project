@@ -70,8 +70,9 @@ void show_gameover_screen( int xres, int yres)
      glEnd();
      glDisable(GL_BLEND);
          ggprint16(&r2, 40, 0x000000 , "xx_GAMEOVER_xx ");
-         ggprint8b(&r2, 15, 0x000000 , "      Main Menu");
-         ggprint8b(&r2, 15, 0x000000 , "        Quit");
+         ggprint10(&r2, 15, 0x000000 , "      Press Main Menu");
+         ggprint10(&r2, 15, 0x000000 , "      Press \"R\" to restart the level!");
+         ggprint10(&r2, 15, 0x000000 , "      Press \"Esc\" to Quit");
 
 }
 
