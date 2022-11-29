@@ -182,6 +182,10 @@ public:
 			ahead = a;
 			++nasteroids;
 		}
+        for (int z=0; z<2;z++) {
+            make_enemy(gl.xres, gl.yres, gl.t_enemy);
+            z++;
+        }
 		clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	}
 
@@ -1226,7 +1230,7 @@ void render()
 	if(gl.test_mode) {
 	    //show Jacob's feature mode
 	    tester_mode(gl.xres, gl.yres);
-		enemy_movement(gl.xres);
+		enemy_movement(gl.yres);
         if (!enemy_isAlive()) {
             gl.test_mode = 0;
         }

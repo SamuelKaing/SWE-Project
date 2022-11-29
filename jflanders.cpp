@@ -8,6 +8,7 @@
 #include "skaing.h"
 #include "image.h"
 #include <stdlib.h>
+#include <random>
 
 typedef float Flt;
 typedef float Vec[3];
@@ -169,21 +170,21 @@ void make_enemy(int xres, int yres, Texture enemy_tex)
 {
     se.enemy_tex = enemy_tex;
     se.width = 20;
-    se.pos[0] = xres / 2;
+    se.pos[0] = rand() % xres;
     se.pos[1] = yres - (yres / 4);
     se.health = 5;
     se.movement = 0;
 }
 
-void enemy_movement(int xres) {
-    if (se.pos[0] <= se.width)
+void enemy_movement(int yres) {
+    if (se.pos[1] <= se.width)
         se.movement = 1;
-    if (se.pos[0] >= xres - se.width)
+    if (se.pos[1] >= yres - se.width)
         se.movement = 0;
     if (se.movement == 0)
-        se.pos[0] -= 3;
+        se.pos[1] -= 1;
     if (se.movement == 1)
-        se.pos[0] += 3;
+        se.pos[1] += 1;
 }
 
 int enemy_hit(Bullet *b) {
