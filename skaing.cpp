@@ -161,33 +161,34 @@ void spawn_boss() {
     glPopMatrix();
 }
 
-void init_boss(int xres, int yres, Texture boss_tex)
+void init_boss(int xres, int yres, Texture boss_tex, int level) //need level
 {
     boss.enemy_tex = boss_tex;
     boss.width = 40;
     boss.pos[0] = xres / 2;
     boss.pos[1] = yres - (yres / 4);
-    boss.health = 40;
+    boss.health = 20 + (10 * level);
     boss.movement = 0;
 }
 
-void boss_movement(int xres) {
+void boss_movement(int xres, int level) { //need level
     if (boss.pos[0] <= boss.width)
         boss.movement = 1;
     if (boss.pos[0] >= xres - boss.width)
         boss.movement = 0;
 
     if (boss.movement == 0)
-        boss.pos[0] -= 5;
+        boss.pos[0] = boss.pos[0] - (2 + (1 * level));
     if (boss.movement == 1)
-        boss.pos[0] += 5;
+        boss.pos[0] = boss.pos[0] + (2 + (1 * level));
 }
 
-void boss_behavior(struct timespec &boss_bulletTimer) {
+void boss_behavior(struct timespec &boss_bulletTimer, int level) { //need level
     //Every couple seconds, shoot bullet at player
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     double ts = timeDiff(&boss_bulletTimer, &bt);
+    float velocity = -0.8 - (0.2 * level);
 
     //Copying method of bullet creation from asteroids.cpp
     //a little time between each bullet
@@ -198,7 +199,7 @@ void boss_behavior(struct timespec &boss_bulletTimer) {
             b->pos[0] = boss.pos[0];
             b->pos[1] = boss.pos[1];
             //how fast bullet will move down
-            b->vel[1] = -1.0;
+            b->vel[1] = velocity;
             ++nbullets;
         }
     }

@@ -172,7 +172,7 @@ void make_enemy(int xres, int yres, Texture enemy_tex)
     se.width = 20;
     se.pos[0] = rand() % xres;
     se.pos[1] = yres - (yres / 10);
-    se.health = 5;
+    se.health = 1;
     se.movement = 0;
 }
 

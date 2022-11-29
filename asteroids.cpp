@@ -657,7 +657,7 @@ int check_keys(XEvent *e, Game *g)
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
 			//make boss
-			init_boss(gl.xres, gl.yres, gl.t_boss);
+			init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 			//start timer for behavior
 			clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 			break;
@@ -956,7 +956,7 @@ void physics(Game *g)
 
 		gl.boss_rush = 1;
 		//make boss
-		init_boss(gl.xres, gl.yres, gl.t_boss);
+		init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 		//start timer for behavior
 		clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 
@@ -994,9 +994,9 @@ void physics(Game *g)
     if (gl.test_mode) {
         int j = 0;
         while (j < g->nbullets) {
-            Bullet *b = &g->barr[i];
+            Bullet *b = &g->barr[j];
             if (enemy_hit(b)) {
-                memcpy(&g->barr[i], &g->barr[g->nbullets-1], sizeof(Bullet));
+                memcpy(&g->barr[j], &g->barr[g->nbullets-1], sizeof(Bullet));
                 g->nbullets--;
             }
             j++;
@@ -1292,15 +1292,15 @@ void render(Game *g)
 	if (g->nasteroids == 0) {
 
 		gl.boss_rush = 1;
-		init_boss(gl.xres, gl.yres, gl.t_boss);
+		init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 	}
 
 	if (gl.boss_rush) {
 		if (g->nasteroids != -1)
 			start_boss_rush(gl.xres);
 		spawn_boss();
-		boss_movement(gl.xres);
-		boss_behavior(gl.boss_bulletTimer);
+		boss_movement(gl.xres, gl.level);
+		boss_behavior(gl.boss_bulletTimer, gl.level);
 		boss_drawBullets();
 		if (!boss_isAlive()) {
 			gl.boss_rush = 0;
