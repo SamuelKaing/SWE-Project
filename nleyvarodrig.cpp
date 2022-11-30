@@ -103,7 +103,7 @@ void show_credits(Texture t, int xres, int yres)
 
 
 void menu(int xres, int yres){ 
-    Rect resume, quit;
+    Rect resume, quit, help;
 	
 	int w = 200;
 	int heightW = 35;
@@ -113,11 +113,15 @@ void menu(int xres, int yres){
 
 	int quityCent = ycent / 2;
 	int resyCent =  ycent * 1.35;
+	int helpyCent = ycent / 1.1;
 
 	resume.left = xcent;
 	resume.bot = resyCent;
 	resume.center = 1;
 
+	help.left = xcent;
+	help.bot = helpyCent;
+	help.center = 1;
 
 	quit.left = xcent;
 	quit.bot = quityCent;
@@ -139,7 +143,17 @@ void menu(int xres, int yres){
 		glVertex2f( xcent+widthW, resyCent-heightW);
 	glEnd();	
 	glColor3i(1, 1, 1);
-	ggprint16(&resume, 15, 0x000000, "Resume");	
+	ggprint16(&resume, 10, 0x000000, "Resume");	
+	
+	glColor3f(.64f, .55f, .55f);
+	glBegin(GL_QUADS);
+		glVertex2f( xcent-widthW, helpyCent-heightW);
+		glVertex2f( xcent-widthW, helpyCent+heightW);
+		glVertex2f( xcent+widthW, helpyCent+heightW);
+		glVertex2f( xcent+widthW, helpyCent-heightW);
+	glEnd();	
+	glColor3i(1, 1, 1);
+	ggprint16(&help, 20, 0x000000, "Controls");	
 	
 	glColor3f(.64f, .55f, .55f);
 	glBegin(GL_QUADS);
@@ -149,7 +163,7 @@ void menu(int xres, int yres){
 		glVertex2f( xcent+widthW, quityCent-heightW);
 	glEnd();	
 	glColor3i(1, 1 , 1);
-	ggprint16(&quit, 15, 0x000000, "Quit");	
+	ggprint16(&quit, 0, 0x000000, "Quit");	
 		
 }
 
