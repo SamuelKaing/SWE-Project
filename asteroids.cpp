@@ -1020,21 +1020,32 @@ void physics(Game *g)
 			a = a ->next;
 		}
 //	}
-//	Weapon switch
-   if (gl.feature_weapons) {
+//      Weapon switch
 
-        if (weapon_switch(g->ship.pos)) {
-            gl.max_bullets = 11;
+    if ((gl.weapon ==1) || (gl.weapon == 3))  {
+        if (gl.feature_weapons) {
+            if (weapon_switch(g->ship.pos)) {
+               gl.max_bullets = 11;
+            }
         }
-	else if (weapon_switch2(g->ship.pos)) {
-            gl.max_bullets = 3;
-        }
-	else if (weapon_switch2(g->ship.pos)) {
-            gl.max_bullets = 5;
-        }
-
-
     }
+    else if (gl.weapon == 2) {
+        if (gl.feature_weapons) {
+            if (weapon_switch2(g->ship.pos)) {
+               gl.max_bullets = 0;
+            }
+        }
+    }
+  /* 
+    else {
+        if (gl.feature_weapons) {
+           if (weapon_switch3(g->ship.pos)) {
+               gl.max_bullets = 2;
+        }
+       }
+    }
+*/
+
 
 
 	//---------------------------------------------------
@@ -1171,7 +1182,7 @@ void render(Game *g)
 	r.bot = gl.yres - 20;
 	r.left = 10;
 	r.center = 0;
-	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
+	ggprint8b(&r, 16, 0x00ff0000, "3350 - SPACE-INVADERS");
 	ggprint8b(&r, 16, 0x00ff0000, "Level: %i", gl.level);
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g->nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g->nasteroids);

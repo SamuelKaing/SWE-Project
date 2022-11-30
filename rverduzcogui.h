@@ -14,4 +14,4 @@ extern int weapon_switch(Vec ship_pos);
 
 extern int weapon_switch2(Vec ship_pos);
 
-extern int weapon_switch3(Vec ship_pos);
+//extern int weapon_switch3(Vec ship_pos);

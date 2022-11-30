@@ -70,9 +70,9 @@ void show_gameover_screen( int xres, int yres)
      glEnd();
      glDisable(GL_BLEND);
          ggprint16(&r2, 40, 0x000000 , "xx_GAMEOVER_xx ");
-         ggprint10(&r2, 15, 0x000000 , "      Press Main Menu");
-         ggprint10(&r2, 15, 0x000000 , "      Press \"R\" to restart the level!");
-         ggprint10(&r2, 15, 0x000000 , "      Press \"Esc\" to Quit");
+         ggprint8b(&r2, 15, 0x000000 , "      Press Main Menu");
+         ggprint8b(&r2, 15, 0x000000 , "      Press \"R\" to restart the level!");
+         ggprint8b(&r2, 15, 0x000000 , "      Press \"Esc\" to Quit");
 
 }
 
@@ -133,7 +133,7 @@ void show_feature_weapons(int xres, int yres, int weapon, int max_bullets, Vec s
     if (Gl.weapon_display == 1) {
         Gl.weapon_one[0] = 140;// rand() % (xres - 20);
         Gl.weapon_one[1] =140; // rand() % (40);
-        glColor3f(1.0, 0.0, 0.0);
+        glColor3f(0.5, 0.5, 0.5);
         glBegin(GL_QUADS);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
@@ -162,8 +162,8 @@ void show_feature_weapons(int xres, int yres, int weapon, int max_bullets, Vec s
     // Second weapon switch
     else if (Gl.weapon_display == 2) {
         Gl.weapon_one[0] = 280; //  rand() % (xres - 20);
-        Gl.weapon_one[1] = 40; // rand() % (40);
-        glColor3f(0.0, 1.0, 0.0);
+        Gl.weapon_one[1] = 160; // rand() % (40);
+        glColor3f(0.5, 0.5, 0.5);
         glBegin(GL_QUADS);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
@@ -175,8 +175,8 @@ void show_feature_weapons(int xres, int yres, int weapon, int max_bullets, Vec s
     // Third weapon switch
     else if(Gl.weapon_display == 3) {
         Gl.weapon_one[0] = 550; //  rand() % (xres - 20);
-        Gl.weapon_one[1] = 40; // rand() % (40);
-        glColor3f(0.0, 0.0, 1.0);
+        Gl.weapon_one[1] = 100; // rand() % (40);
+        glColor3f(0.5, 0.5, 0.5);
         glBegin(GL_QUADS);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
              glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
@@ -195,18 +195,12 @@ void show_feature_weapons(int xres, int yres, int weapon, int max_bullets, Vec s
 
 int weapon_switch(Vec ship_pos)
 {
-      if ((140 <= (ship_pos[1]+8)) && (140 >= (ship_pos[1]-8))){
-            if ((140 <= (ship_pos[0] + 8)) && (140 >= (ship_pos[1] -8))) {
-                     glColor3f(0.0, 0.0, 0.0);
-                     glBegin(GL_QUADS);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
-
-                     glEnd();
-             return 1;
-            }
+      if (((140 <= (ship_pos[1]+8)) && 140 >= (ship_pos[1]-8)) ||
+              ((100 <= (ship_pos[1]+8)) && 100 >= (ship_pos[1]-8))){
+                if (((140 <= (ship_pos[0] + 8)) && (140 >= (ship_pos[1] -8))) ||
+                   ((550 <= (ship_pos[0] + 8)) && (550 >= (ship_pos[1] -8)))){
+                     return 1;
+                }
           }
 
    return 0;
@@ -214,16 +208,8 @@ int weapon_switch(Vec ship_pos)
 
 int weapon_switch2(Vec ship_pos)
 {
-      if ((140 <= (ship_pos[1]+8)) && 140 >= (ship_pos[1]-8)){
-                if ((550 <= (ship_pos[0] + 8)) && (550 >= (ship_pos[1] -8))) {
-                     glColor3f(0.0, 0.0, 0.0);
-                     glBegin(GL_QUADS);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
-
-                     glEnd();
+      if ((160 <= (ship_pos[1]+8)) && 160 >= (ship_pos[1]-8)){
+                if ((280 <= (ship_pos[0] + 8)) && (280 >= (ship_pos[1] -8))) {
                      return 1;
                 }
           }
@@ -231,25 +217,18 @@ int weapon_switch2(Vec ship_pos)
    return 0;
 }
 
+/*
 int weapon_switch3(Vec ship_pos)
 {
-      if ((40 <= (ship_pos[1]+8)) && 40 >= (ship_pos[1]-8)){
-                if ((280 <= (ship_pos[0] + 8)) && (280 >= (ship_pos[1] -8))) {
-                     glColor3f(0.0, 0.0, 0.0);
-                     glBegin(GL_QUADS);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] -5);
-                     glVertex2i(Gl.weapon_one[0] - 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] +5);
-                     glVertex2i(Gl.weapon_one[0] + 5, Gl.weapon_one[1] -5);
-
-                     glEnd();
+      if ((100 <= (ship_pos[1]+8)) && 100 >= (ship_pos[1]-8)){
+                if ((550 <= (ship_pos[0] + 8)) && (550 >= (ship_pos[1] -8))) {
                      return 1;
                 }
           }
 
    return 0;
 }
-
+*/
 
 
 

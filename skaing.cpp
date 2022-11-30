@@ -53,7 +53,7 @@ void show_controls(int xres, int yres)
     //Outline box
     int xcent = xres / 2;
     int ycent = yres / 2;
-    int w = 180;
+    int w = 200;
     glColor3f(0.9f, 1.0f, 1.07f);
     glBegin(GL_QUADS);
     	glVertex2f( xcent-w, ycent-w);
@@ -85,7 +85,8 @@ void show_controls(int xres, int yres)
     ggprint8b(&r2, 30, 0x2e281, "Boss Mode -- b");
     ggprint8b(&r2, 30, 0x2e281, "Jacob's Feature mode -- x");
     ggprint8b(&r2, 30, 0x2e281, "Level Cycle -- l");
-    
+    ggprint8b(&r2, 30, 0x2e281, "Weapon feature -- w");
+ 
 }
 
 void start_boss_rush(int xres) 
