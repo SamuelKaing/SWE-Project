@@ -74,7 +74,7 @@ void show_controls(int xres, int yres)
     r2.left = (xres / 2) - (w / 3);
     r2.bot = (yres / 2) + (w - 25);
 
-    ggprint16(&r2, 40, 0x2E281, "Controls");
+    ggprint16(&r2, 40, 0x2E281, "Controls (F1 to escape)");
     ggprint8b(&r2, 30, 0x2e281, "Movement -- Arrow Keys");
     ggprint8b(&r2, 30, 0x2e281, "Shoot -- Spacebar");
     ggprint8b(&r2, 30, 0x2e281, "Pause -- p");

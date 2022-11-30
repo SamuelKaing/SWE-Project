@@ -491,14 +491,20 @@ void check_mouse(XEvent *e, Game *g)
 			int xcent = gl.xres / 2;
 			int ycent = gl.yres / 2;
 			//Check if mouse is over resume or quit buttons.
-			//Resume
-			if (gl.mouse_cursor && e->xbutton.x > xcent-100 && e->xbutton.x < xcent+100)
+			
+			if (gl.mouse_cursor && e->xbutton.x > xcent-100 && e->xbutton.x < xcent+100){
+				//Resume
 				if (e->xbutton.y > (ycent/2) && e->xbutton.y < (ycent *.8))
 					gl.mouse_cursor ^= 1;
-			//Quit
-			if (gl.mouse_cursor && e->xbutton.x > xcent-100 && e->xbutton.x < xcent+100)
-				if (e->xbutton.y > (ycent*1.35) && e->xbutton.y < (ycent *1.65))
+				//Help Screen
+				else if (e->xbutton.y > (ycent/1.1) && e->xbutton.y > (ycent * .625)){
+					gl.help ^= 1;
+					//printf("Success!");
+					//show_controls(gl.xres, gl.yres);
+				//Quit
+				} else if (e->xbutton.y > (ycent*1.35) && e->xbutton.y < (ycent *1.65))
 					XDestroyWindow(x11.getDisplay(), x11.getWindow());
+			}
 
 
 			if (gl.credits || gl.mouse_cursor)
@@ -789,7 +795,7 @@ void physics(Game *g)
 	    return;
 	if (gl.help)
 	    return;
-        if (gl.gameover)
+    if (gl.gameover)
 	    return;
 	if(gl.win_screen)
 	   return;
@@ -953,7 +959,6 @@ void physics(Game *g)
 	}
 
 	if (g->nasteroids == 0) {
-
 		gl.boss_rush = 1;
 		//make boss
 		init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
@@ -961,6 +966,8 @@ void physics(Game *g)
 		clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 
 		g->nasteroids--;
+
+		sleep(1);
 	}
 
 	
@@ -1183,9 +1190,10 @@ void render(Game *g)
 	r.left = 10;
 	r.center = 0;
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - SPACE-INVADERS");
-	ggprint8b(&r, 16, 0x00ff0000, "Level: %i", gl.level);
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g->nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g->nasteroids);
+	ggprint8b(&r, 16, 0x00fffff0, "Press \"M\" for menu");
+	ggprint8b(&r, 16, 0x00fffff0, "Level: %i", gl.level);
 	//-------------------------------------------------------------------------
 	//Draw the ship
 	glColor3fv(g->ship.color);
@@ -1285,6 +1293,11 @@ void render(Game *g)
 		show_credits(gl.t, gl.xres, gl.yres);
 		return;
 	}
+	if (gl.help){
+		show_controls(gl.xres, gl.yres);
+		return;
+	}
+
 	if (gl.mouse_cursor){
 	    menu(gl.xres, gl.yres);
 	    return;
@@ -1292,10 +1305,6 @@ void render(Game *g)
 	if (gl.p_screen){
 	    //show pause screen
 	   	show_pause(gl.xres, gl.yres);
-		return;
-	}
-	if(gl.help){
-		show_controls(gl.xres, gl.yres);
 		return;
 	}
 
