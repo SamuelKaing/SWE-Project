@@ -87,7 +87,7 @@ public:
 		juanfeature = 0;
 		feature_weapons = 0;
 		weapon = 0;
-		max_bullets = 11;
+		max_bullets = 1;
 		win_screen = 0;
 	}
 } gl;
@@ -657,7 +657,7 @@ int check_keys(XEvent *e, Game *g)
 		case XK_b:
 			gl.boss_rush = boss_rush_state(gl.boss_rush);
 			//make boss
-			init_boss(gl.xres, gl.yres, gl.t_boss);
+			init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 			//start timer for behavior
 			clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 			break;
@@ -956,7 +956,7 @@ void physics(Game *g)
 
 		gl.boss_rush = 1;
 		//make boss
-		init_boss(gl.xres, gl.yres, gl.t_boss);
+		init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 		//start timer for behavior
 		clock_gettime(CLOCK_REALTIME, &gl.boss_bulletTimer);
 
@@ -994,9 +994,9 @@ void physics(Game *g)
     if (gl.test_mode) {
         int j = 0;
         while (j < g->nbullets) {
-            Bullet *b = &g->barr[i];
+            Bullet *b = &g->barr[j];
             if (enemy_hit(b)) {
-                memcpy(&g->barr[i], &g->barr[g->nbullets-1], sizeof(Bullet));
+                memcpy(&g->barr[j], &g->barr[g->nbullets-1], sizeof(Bullet));
                 g->nbullets--;
             }
             j++;
@@ -1004,7 +1004,7 @@ void physics(Game *g)
     }
 
 	//COLLISION MODE
-	if(gl.juanfeature){
+//	if(gl.juanfeature){
 		a = g->ahead;
 		while(a){
 			Flt test1,test2;
@@ -1019,7 +1019,34 @@ void physics(Game *g)
 				break;
 			a = a ->next;
 		}
-	}
+//	}
+//      Weapon switch
+
+    if ((gl.weapon ==1) || (gl.weapon == 3))  {
+        if (gl.feature_weapons) {
+            if (weapon_switch(g->ship.pos)) {
+               gl.max_bullets = 11;
+            }
+        }
+    }
+    else if (gl.weapon == 2) {
+        if (gl.feature_weapons) {
+            if (weapon_switch2(g->ship.pos)) {
+               gl.max_bullets = 0;
+            }
+        }
+    }
+  /* 
+    else {
+        if (gl.feature_weapons) {
+           if (weapon_switch3(g->ship.pos)) {
+               gl.max_bullets = 2;
+        }
+       }
+    }
+*/
+
+
 
 	//---------------------------------------------------
 	//check keys pressed now
@@ -1155,7 +1182,7 @@ void render(Game *g)
 	r.bot = gl.yres - 20;
 	r.left = 10;
 	r.center = 0;
-	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
+	ggprint8b(&r, 16, 0x00ff0000, "3350 - SPACE-INVADERS");
 	ggprint8b(&r, 16, 0x00ff0000, "Level: %i", gl.level);
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g->nbullets);
 	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g->nasteroids);
@@ -1292,15 +1319,15 @@ void render(Game *g)
 	if (g->nasteroids == 0) {
 
 		gl.boss_rush = 1;
-		init_boss(gl.xres, gl.yres, gl.t_boss);
+		init_boss(gl.xres, gl.yres, gl.t_boss, gl.level);
 	}
 
 	if (gl.boss_rush) {
 		if (g->nasteroids != -1)
 			start_boss_rush(gl.xres);
 		spawn_boss();
-		boss_movement(gl.xres);
-		boss_behavior(gl.boss_bulletTimer);
+		boss_movement(gl.xres, gl.level);
+		boss_behavior(gl.boss_bulletTimer, gl.level);
 		boss_drawBullets();
 		if (!boss_isAlive()) {
 			gl.boss_rush = 0;

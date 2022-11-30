@@ -10,4 +10,8 @@ extern unsigned int manage_feature_weapons_state(unsigned int w);
 
 extern void show_feature_weapons(int xres, int yres, int weapon, int max_bullets, Vec ship_pos);
 
+extern int weapon_switch(Vec ship_pos);
 
+extern int weapon_switch2(Vec ship_pos);
+
+//extern int weapon_switch3(Vec ship_pos);

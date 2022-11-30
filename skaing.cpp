@@ -53,7 +53,7 @@ void show_controls(int xres, int yres)
     //Outline box
     int xcent = xres / 2;
     int ycent = yres / 2;
-    int w = 180;
+    int w = 200;
     glColor3f(0.9f, 1.0f, 1.07f);
     glBegin(GL_QUADS);
     	glVertex2f( xcent-w, ycent-w);
@@ -85,7 +85,8 @@ void show_controls(int xres, int yres)
     ggprint8b(&r2, 30, 0x2e281, "Boss Mode -- b");
     ggprint8b(&r2, 30, 0x2e281, "Jacob's Feature mode -- x");
     ggprint8b(&r2, 30, 0x2e281, "Level Cycle -- l");
-    
+    ggprint8b(&r2, 30, 0x2e281, "Weapon feature -- w");
+ 
 }
 
 void start_boss_rush(int xres) 
@@ -161,44 +162,45 @@ void spawn_boss() {
     glPopMatrix();
 }
 
-void init_boss(int xres, int yres, Texture boss_tex)
+void init_boss(int xres, int yres, Texture boss_tex, int level) //need level
 {
     boss.enemy_tex = boss_tex;
     boss.width = 40;
     boss.pos[0] = xres / 2;
     boss.pos[1] = yres - (yres / 4);
-    boss.health = 40;
+    boss.health = 20 + (10 * level);
     boss.movement = 0;
 }
 
-void boss_movement(int xres) {
+void boss_movement(int xres, int level) { //need level
     if (boss.pos[0] <= boss.width)
         boss.movement = 1;
     if (boss.pos[0] >= xres - boss.width)
         boss.movement = 0;
 
     if (boss.movement == 0)
-        boss.pos[0] -= 5;
+        boss.pos[0] = boss.pos[0] - (2 + (0.6 * level));
     if (boss.movement == 1)
-        boss.pos[0] += 5;
+        boss.pos[0] = boss.pos[0] + (2 + (0.6 * level));
 }
 
-void boss_behavior(struct timespec &boss_bulletTimer) {
+void boss_behavior(struct timespec &boss_bulletTimer, int level) { //need level
     //Every couple seconds, shoot bullet at player
     struct timespec bt;
     clock_gettime(CLOCK_REALTIME, &bt);
     double ts = timeDiff(&boss_bulletTimer, &bt);
+    float velocity = -0.8 - (0.2 * level);
 
     //Copying method of bullet creation from asteroids.cpp
     //a little time between each bullet
-    if (ts > 2.0) {
+    if (ts > (2.0 - (0.5 * level))) {
         clock_gettime(CLOCK_REALTIME, &boss_bulletTimer);
         if (nbullets < MAX_BULLETS) {
             Bullet *b = &barr[nbullets];
             b->pos[0] = boss.pos[0];
             b->pos[1] = boss.pos[1];
             //how fast bullet will move down
-            b->vel[1] = -1.0;
+            b->vel[1] = velocity;
             ++nbullets;
         }
     }
@@ -267,7 +269,7 @@ void boss_drawBullets() {
             glVertex2f(b->pos[0]+1.0f, b->pos[1]);
             glVertex2f(b->pos[0],      b->pos[1]-1.0f);
             glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-            glColor3f(0.5, 0.0, 0.0);
+            glColor3f(1.0, 0.4, 0.4);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
             glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
             glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
